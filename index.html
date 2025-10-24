@@ -89,6 +89,14 @@
       mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
       opacity: .4;
     }
+  /* help modal entrance */
+  #helpModal:not(.hidden) .glass {
+    animation: modalPop 220ms ease-out both;
+  }
+  @keyframes modalPop {
+    0% { transform: translateY(-6px) scale(0.98); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
   </style>
 </head>
 <body class="min-h-screen">
@@ -99,11 +107,15 @@
   </div>
 
   <main class="max-w-md mx-auto p-5 pb-24">
-    <header class="mt-6 mb-6 text-center">
-      <h1 class="text-3xl font-black tracking-wider uppercase drop-shadow-[0_0_12px_rgba(0,255,255,0.35)]">
-        Neo Contraction Tracker
+    <header class="mt-6 mb-6 flex items-center justify-between">
+      <h1 class="pixel pixel-tight title-pixel font-black tracking-wide uppercase drop-shadow-[0_0_12px_rgba(0,255,255,0.35)]">
+          Neo Contraction Tracker
       </h1>
-      <p class="text-xs opacity-80 mt-2 tracking-widest">One‑tap timing • Retro‑future vibes</p>
+
+     <button id="openHelp" aria-label="How to use"
+       class="ml-3 px-3 py-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/15 active:bg-white/20">
+        <span class="pixel" style="font-size:.9rem">?</span>
+     </button>
     </header>
 
     <section class="glass rounded-2xl p-5 shadow-[0_0_30px_rgba(0,255,255,0.08)] relative overflow-hidden">
@@ -199,5 +211,29 @@
     class="fixed left-4 bottom-4 z-50 text-xs font-mono px-2 py-1 rounded bg-white/15 border border-white/25 text-white">
     Force 5-1-1
   </button>
+  <!-- HELP MODAL -->
+<div id="helpModal" class="fixed inset-0 hidden z-40">
+  <!-- Backdrop -->
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+  <!-- Panel -->
+  <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="pixel" style="font-size:1rem">How to use Neo CT</div>
+      <button id="closeHelp"
+        class="px-2 py-1 rounded-md bg-white/10 border border-white/20 hover:bg-white/15">
+        Close
+      </button>
+    </div>
+
+    <ol class="space-y-2 text-sm leading-6 opacity-90">
+      <li>• Tap <span class="pixel">One-Tap</span> at the <b>start</b> of each contraction.</li>
+      <li>• Each tap <b>ends</b> the last one and <b>starts</b> a new one automatically.</li>
+      <li>• Use <span class="pixel">End Current</span> only if a contraction stops and you’re not immediately starting the next.</li>
+      <li>• Button flashes <b>green</b> for ≥1:00, <b>yellow</b> for &lt;1:00.</li>
+      <li>• <span class="pixel">Export CSV</span> to share timing with your provider.</li>
+    </ol>
+  </div>
+</div>
 </body>
 </html>
