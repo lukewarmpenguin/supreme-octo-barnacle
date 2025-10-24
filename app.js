@@ -80,21 +80,16 @@ function isFiveOneOne(rows) {
   const MIN1 = 60 * 1000;
   const MIN5 = 5 * 60 * 1000;
 
-  // rows are most-recent-first; look at the last hour
-  const windowRows = rows.filter(r => r.end >= (now - HOUR));
-  if (windowRows.length < 6) return false; // not enough density to call it
+  // Consider only contractions that have a completed rest (i.e., have cycleMs)
+  const recent = rows.filter(r => r.cycleMs != null && r.end >= (now - HOUR));
+  if (recent.length < 6) return false; // need enough density to be confident
 
-  let meets = 0;
-  windowRows.forEach(r => {
-    const okDuration = r.durationMs >= MIN1;
-    const okInterval = (r.intervalMs != null) && (r.intervalMs <= MIN5);
-    if (okDuration && okInterval) meets++;
-  });
+  const avgContraction = recent.reduce((a,r)=>a+r.durationMs,0) / recent.length;
+  const avgCycle       = recent.reduce((a,r)=>a+r.cycleMs,0) / recent.length;
 
-  const ratio = meets / windowRows.length;
-  return ratio >= 0.8; // 80% of last-hour entries meet both conditions
+  // 5-1-1: contractions average >= 1 min AND cycle average <= 5 min over the past hour
+  return avgContraction >= MIN1 && avgCycle <= MIN5;
 }
-
 function showFiveOneOneAlert() {
   const overlay = document.getElementById('alertOverlay');
   if (!overlay) return;               // safe-guard if HTML not present
@@ -145,7 +140,8 @@ rows.forEach(r => {
       <div class="text-xs opacity-70">Rest</div>
       <div class="text-sm tabular-nums">${r.restMs == null ? "—" : fmt(r.restMs)}</div>
       <div class="text-[10px] opacity-70 mt-1">Cycle: ${r.cycleMs == null ? "—" : fmt(r.cycleMs)}</div>
-    </div>`;
+    </div>
+  `;
   list.appendChild(row);
 });
 
@@ -161,65 +157,98 @@ rows.forEach(r => {
 function handleBigTap(){
   const t = Date.now();
 
-  // A) Start first contraction (no flashing here—nothing ended yet)
-  if (!currentStart) {
+  // A) First ever tap: start a contraction
+  if (!currentStart || !currentPhase) {
+    currentPhase = "contraction";
     currentStart = t;
-    lastStart = t;
+    lastStart = t; // not used for logic anymore, but fine to keep
     fire(1); vibrate([10,40,10]);
     save(); render(); startTicker();
     return;
   }
 
-  // B) End current and immediately start a new contraction
-  const end = t;
-  const durationMs = end - currentStart;
-  const intervalMs = lastStart ? t - lastStart : null;
+  // B) If we're in a contraction: end it, log it as a row, then start REST
+  if (currentPhase === "contraction") {
+    const end = t;
+    const durationMs = end - currentStart;
 
-  rows = [{
-    id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
-    start: currentStart,
-    end,
-    durationMs,
-    intervalMs
-  }, ...rows];
+    rows = [{
+      id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
+      start: currentStart,
+      end,
+      durationMs,
+      restMs: null,
+      cycleMs: null
+    }, ...rows];
 
-  // start the next one right away
-  currentStart = t;
-  lastStart = t;
+    // flash based on contraction length
+    flashIndicator(durationMs >= 60 * 1000);
 
-  fire(1); vibrate([15,60,15]);
-  save(); render(); startTicker();
+    // immediately start REST phase
+    currentPhase = "rest";
+    currentStart = t;
 
-  // 1s visual indicator + (Android) haptics
-  flashIndicator(durationMs >= 60 * 1000);
+    fire(0.6); vibrate([12,40,12]);
+    save(); render(); startTicker();
+    return;
+  }
 
-  // 5-1-1 safety check
-  if (isFiveOneOne(rows)) showFiveOneOneAlert();
-}
+  // C) If we're in REST: end it, attach restMs+cycleMs to the most recent contraction, then start a new contraction
+  if (currentPhase === "rest") {
+    const end = t;
+    const restMs = end - currentStart;
+
+    if (rows.length > 0) {
+      rows[0].restMs = restMs;
+      rows[0].cycleMs = rows[0].durationMs + restMs;
+    }
+
+    // Now start a new contraction
+    currentPhase = "contraction";
+    currentStart = t;
+
+    fire(1); vibrate([15,60,15]);
+    save(); render(); startTicker();
+
+    // 5-1-1 safety check runs when we complete a cycle (i.e., after rest)
+    if (isFiveOneOne(rows)) showFiveOneOneAlert();
+    return;
+  }
+}  
   function endCurrent(){
-  if (!currentStart) return;
+  if (!currentStart || !currentPhase) return;
 
   const t = Date.now();
-  const durationMs = t - currentStart;
 
-  rows = [{
-    id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
-    start: currentStart,
-    end: t,
-    durationMs,
-    intervalMs: lastStart ? currentStart - lastStart : null
-  }, ...rows];
+  if (currentPhase === "contraction") {
+    const durationMs = t - currentStart;
+    rows = [{
+      id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
+      start: currentStart,
+      end: t,
+      durationMs,
+      restMs: null,
+      cycleMs: null
+    }, ...rows];
+
+    // flash on contraction end
+    flashIndicator(durationMs >= 60 * 1000);
+  } else {
+    // ending rest without starting a contraction
+    const restMs = t - currentStart;
+    if (rows.length > 0) {
+      rows[0].restMs = restMs;
+      rows[0].cycleMs = rows[0].durationMs + restMs;
+    }
+    // a completed cycle means: check 5-1-1
+    if (isFiveOneOne(rows)) showFiveOneOneAlert();
+  }
 
   currentStart = null;
+  currentPhase = null;
 
   fire(.8); vibrate([8,40,8]);
   save(); render(); startTicker();
-
-  // 1s visual indicator + (Android) haptics
-  flashIndicator(durationMs >= 60 * 1000);
-
-  // 5-1-1 safety check
-  if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
 // ---- Help modal wiring (simple & reliable) ----
 (function wireHelpOnce(){
