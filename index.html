@@ -14,6 +14,23 @@
   <link rel="icon" href="icon-192.png" sizes="192x192">
   <link rel="icon" href="icon-512.png" sizes="512x512">
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 8-bit pixel font -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --retro-font: 'Press Start 2P', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  /* Apply globally, but keep paragraphs small so it’s readable */
+  body, button, .retro {
+    font-family: var(--retro-font);
+    letter-spacing: 0.5px;
+  }
+  /* Headings slightly larger spacing */
+  h1, h2, .retro-h {
+    letter-spacing: 1px;
+    text-transform: none; /* keep your uppercase if you like; set to none for pixel feel */
+  }
+</style>
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     html, body { height: 100%; background: #0f022b; color: white; }
@@ -97,5 +114,33 @@
       });
     }
   </script>
+<!-- 5-1-1 ALERT OVERLAY -->
+<div id="alertOverlay" class="fixed inset-0 hidden z-50">
+  <!-- dark veil -->
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+  <!-- Corner klaxons (🚨) -->
+  <div class="absolute top-3 left-3 text-5xl select-none animate-klaxon">🚨</div>
+  <div class="absolute top-3 right-3 text-5xl select-none animate-klaxon">🚨</div>
+  <div class="absolute bottom-3 left-3 text-5xl select-none animate-klaxon">🚨</div>
+  <div class="absolute bottom-3 right-3 text-5xl select-none animate-klaxon">🚨</div>
+
+  <!-- Center banner -->
+  <div class="absolute inset-x-0 top-10 flex justify-center">
+    <div class="px-5 py-4 rounded-xl border-4 border-fuchsia-400 bg-cyan-300/20 shadow-[0_0_30px_rgba(255,0,255,0.5)]
+                text-white text-center retro-h animate-banner">
+      <div class="text-sm opacity-90">5-1-1 Reached</div>
+      <div class="text-2xl mt-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">BABY INCOMING!</div>
+    </div>
+  </div>
+
+  <!-- Dismiss button (lets you clear the overlay) -->
+  <div class="absolute inset-x-0 bottom-10 flex justify-center">
+    <button id="alertDismiss"
+      class="px-4 py-2 rounded-md bg-white/15 border border-white/25 text-white hover:bg-white/25 retro">
+      Dismiss
+    </button>
+  </div>
+</div>
 </body>
 </html>
