@@ -173,10 +173,15 @@
   /* Glass card look (used by panels/modals) */
   .glass { background: var(--glass); border:1px solid var(--glass-border); backdrop-filter: blur(8px); border-radius: var(--radius-xl); }
 
-  /* Header layout */
-  header.appbar{ margin:18px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  header .title { text-transform: uppercase; letter-spacing:.06em;
-    text-shadow: 0 0 10px rgba(34,211,238,.25), 0 0 22px rgba(217,70,239,.2); }
+  <header class="appbar wrap">
+  <h1 class="title pixel title-pixel tight">Neo Contraction Tracker</h1>
+  <div class="flex items-center gap-2">
+    <button id="crtToggle" class="btn-ghost" aria-label="Toggle CRT">CRT</button>
+    <button id="openHelp" class="btn-ghost" aria-label="How to use">
+      <span class="pixel" style="font-size:.9rem">?</span>
+    </button>
+  </div>
+  </header>
 
   /* Help button */
   .btn-ghost { border:1px solid var(--glass-border); background: rgba(255,255,255,.08); border-radius:999px; padding:.5rem .65rem; }
@@ -226,13 +231,6 @@
   </div>
 
   <main class="max-w-md mx-auto p-5 pb-24">
-   <header class="appbar wrap">
-  <h1 class="title pixel title-pixel tight">Neo Contraction Tracker</h1>
-  <button id="openHelp" class="btn-ghost" aria-label="How to use">
-    <span class="pixel" style="font-size:.9rem">?</span>
-  </button>
-   </header>
-
     <section class="glass rounded-2xl p-5 shadow-[0_0_30px_rgba(0,255,255,0.08)] relative overflow-hidden">
       <div class="flex items-center justify-between">
         <div>
