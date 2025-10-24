@@ -150,39 +150,66 @@ function hideFiveOneOneAlert() {
   }
 
   function handleBigTap(){
-    const t = Date.now();
-    if (!currentStart) {
-      currentStart = t;
-      lastStart = t;
-      fire(1); vibrate([10,40,10]);
-      save(); render(); startTicker();
-      return;
-    }
-    const end = t;
-    const durationMs = end - currentStart;
-    const intervalMs = lastStart ? t - lastStart : null;
-    rows = [{ id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
-              start: currentStart, end, durationMs, intervalMs }, ...rows];
+  const t = Date.now();
+
+  // A) Start first contraction (no flashing here—nothing ended yet)
+  if (!currentStart) {
     currentStart = t;
     lastStart = t;
-    fire(1); vibrate([15,60,15]);
+    fire(1); vibrate([10,40,10]);
     save(); render(); startTicker();
+    return;
   }
 
-  function endCurrent(){
-    if (!currentStart) return;
-    const t = Date.now();
-    rows = [{ id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
-              start: currentStart, end: t, durationMs: t-currentStart,
-              intervalMs: lastStart ? currentStart - lastStart : null }, ...rows];
-    currentStart = null;
-    fire(.8); vibrate([8,40,8]);
-    save(); render(); startTicker();
+  // B) End current and immediately start a new contraction
+  const end = t;
+  const durationMs = end - currentStart;
+  const intervalMs = lastStart ? t - lastStart : null;
 
-    
-    // 5-1-1 check after logging a contraction
-if (isFiveOneOne(rows)) showFiveOneOneAlert();
-  }
+  rows = [{
+    id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
+    start: currentStart,
+    end,
+    durationMs,
+    intervalMs
+  }, ...rows];
+
+  // start the next one right away
+  currentStart = t;
+  lastStart = t;
+
+  fire(1); vibrate([15,60,15]);
+  save(); render(); startTicker();
+
+  // ✅ 1-second glow + haptics based on the duration we just ended
+  flashIndicator(durationMs >= 60 * 1000);
+
+  // safety nudge check
+  if (isFiveOneOne(rows)) showFiveOneOneAlert();
+}
+ function endCurrent(){
+  if (!currentStart) return;
+  const t = Date.now();
+  const durationMs = t - currentStart;
+
+  rows = [{
+    id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Math.random()),
+    start: currentStart,
+    end: t,
+    durationMs,
+    intervalMs: lastStart ? currentStart - lastStart : null
+  }, ...rows];
+
+  currentStart = null;
+
+  fire(.8); vibrate([8,40,8]);
+  save(); render(); startTicker();
+
+  // ✅ flash after ending
+  flashIndicator(durationMs >= 60 * 1000);
+
+  if (isFiveOneOne(rows)) showFiveOneOneAlert();
+}
 
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
