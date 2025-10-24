@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Neo Contraction Tracker</title>
+  <meta name="description" content="One‑tap contraction timing with retro‑future vibes and fireworks.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0f022b">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Neo CT">
+  <link rel="icon" href="icon-192.png" sizes="192x192">
+  <link rel="icon" href="icon-512.png" sizes="512x512">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    html, body { height: 100%; background: #0f022b; color: white; }
+    .glass { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(8px); }
+    .grid-overlay {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px;
+      mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
+      opacity: .4;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, #0f022b, #14053b, #0a001a)"></div>
+    <div class="absolute inset-0 grid-overlay"></div>
+    <div class="absolute inset-x-0 bottom-0 h-[40vh]" style="background: linear-gradient(0deg, rgba(217,70,239,0.2), rgba(34,211,238,0.1), transparent); filter: blur(40px)"></div>
+  </div>
+
+  <main class="max-w-md mx-auto p-5 pb-24">
+    <header class="mt-6 mb-6 text-center">
+      <h1 class="text-3xl font-black tracking-wider uppercase drop-shadow-[0_0_12px_rgba(0,255,255,0.35)]">
+        Neo Contraction Tracker
+      </h1>
+      <p class="text-xs opacity-80 mt-2 tracking-widest">One‑tap timing • Retro‑future vibes</p>
+    </header>
+
+    <section class="glass rounded-2xl p-5 shadow-[0_0_30px_rgba(0,255,255,0.08)] relative overflow-hidden">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-xs uppercase tracking-widest opacity-80">Current</div>
+          <div id="currentElapsed" class="text-5xl font-bold tabular-nums mt-1">—</div>
+          <div id="currentMeta" class="text-xs opacity-70 mt-2">Not running</div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs uppercase tracking-widest opacity-80">Recommended</div>
+          <div class="text-sm opacity-75">Tap for each start</div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-center">
+        <button id="bigTap" class="relative w-56 h-56 rounded-full group focus:outline-none">
+          <span class="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-fuchsia-400 to-violet-500 blur-xl opacity-60 group-active:opacity-80 transition"></span>
+          <span class="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-500/30 via-fuchsia-500/30 to-violet-600/30 border border-white/20"></span>
+          <span class="absolute inset-3 rounded-full bg-black/40 border border-white/10 shadow-inner"></span>
+          <span class="relative z-10 h-full w-full flex flex-col items-center justify-center">
+            <span class="text-xs uppercase tracking-[0.35em] opacity-90">One‑Tap</span>
+            <span id="bigTapLabel" class="text-2xl font-extrabold mt-1">Start Contraction</span>
+            <span class="text-[10px] opacity-70 mt-2">Ends current & starts new</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="mt-5 grid grid-cols-3 gap-3">
+        <button id="endCurrent" class="px-3 py-3 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15">End Current</button>
+        <button id="exportCsv" class="px-3 py-3 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15">Export CSV</button>
+        <button id="resetAll" class="px-3 py-3 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15">Reset</button>
+      </div>
+    </section>
+
+    <section class="mt-6">
+      <div class="flex items-baseline justify-between">
+        <h2 class="text-sm uppercase tracking-widest opacity-80">History</h2>
+        <span class="text-xs opacity-60">Most recent first</span>
+      </div>
+      <div id="history" class="mt-3 space-y-2"></div>
+    </section>
+
+    <footer class="text-[10px] opacity-60 mt-8 text-center">
+      Tip: Add to Home Screen for quick access. One tap per contraction start.
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>
