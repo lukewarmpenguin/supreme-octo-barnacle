@@ -177,7 +177,7 @@ function hideFiveOneOneAlert() {
     row.appendChild(mid);
     row.appendChild(right);
 
-    list.appendChild(row);
+     list.appendChild(row);
   });
 }
 
