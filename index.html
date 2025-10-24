@@ -50,7 +50,10 @@
     50%     { box-shadow: 0 0 18px rgba(34,211,238,0.9), 0 0 40px rgba(217,70,239,0.7); }
   }
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  /* 1s glow overlay on the big button */
+  /* Ensure the button forms its own stacking context */
+  #bigTap { position: relative; isolation: isolate; }
+
+  /* 1s glow overlay on the big button (sits above inner spans) */
   #bigTap.flash-ok::after,
   #bigTap.flash-warn::after {
     content: "";
@@ -59,13 +62,16 @@
     border-radius: 9999px;
     pointer-events: none;
     opacity: 1;
+    z-index: 60; /* <-- higher than inner content (which uses z-10) */
   }
+
   /* Green “OK” glow (≥ 60s) */
   #bigTap.flash-ok::after {
     background: radial-gradient(ellipse at center,
       rgba(34,197,94,0.35), rgba(34,197,94,0.20) 60%, rgba(34,197,94,0.10) 80%, transparent 100%);
     box-shadow: 0 0 30px rgba(34,197,94,0.55), inset 0 0 18px rgba(34,197,94,0.45);
   }
+
   /* Yellow “warn” glow (< 60s) */
   #bigTap.flash-warn::after {
     background: radial-gradient(ellipse at center,
