@@ -110,40 +110,76 @@ function hideFiveOneOneAlert() {
 }
 
   function render() {
-   if (currentStart) {
-  if (currentPhase === "contraction") {
-    lblBig.textContent = "End Contraction → Start Rest";
+  // Button label + meta
+  if (currentStart) {
+    if (currentPhase === "contraction") {
+      lblBig.textContent = "End Contraction → Start Rest";
+    } else {
+      lblBig.textContent = "End Rest → Start Contraction";
+    }
+    if (elMeta) elMeta.textContent =
+      (currentPhase || "—") + " started " + new Date(currentStart).toLocaleTimeString();
   } else {
-    lblBig.textContent = "End Rest → Start Contraction";
+    lblBig.textContent = "Start Contraction";
+    if (elMeta) elMeta.textContent = "Not running";
+    if (elElapsed) elElapsed.textContent = "—";
   }
-  if (elMeta) elMeta.textContent = (currentPhase || "—") + " started " + new Date(currentStart).toLocaleTimeString();
-} else {
-  lblBig.textContent = "Start Contraction";
-  if (elMeta) elMeta.textContent = "Not running";
-  if (elElapsed) elElapsed.textContent = "—";
-}
 
-list.innerHTML = "";
-rows.forEach(r => {
-  const row = document.createElement("div");
-  row.className = "glass rounded-xl p-3 flex items-center justify-between";
-  row.innerHTML = `
-    <div>
-      <div class="text-xs opacity-70">Start</div>
-      <div class="text-sm tabular-nums">${new Date(r.start).toLocaleTimeString()}</div>
-    </div>
-    <div class="text-center">
-      <div class="text-xs opacity-70">Duration</div>
-      <div class="text-lg font-semibold tabular-nums">${fmt(r.durationMs)}</div>
-    </div>
-    <div class="text-right">
-      <div class="text-xs opacity-70">Rest</div>
-      <div class="text-sm tabular-nums">${r.restMs == null ? "—" : fmt(r.restMs)}</div>
-      <div class="text-[10px] opacity-70 mt-1">Cycle: ${r.cycleMs == null ? "—" : fmt(r.cycleMs)}</div>
-    </div>
-  `;
-  list.appendChild(row);
-});
+  // History list (DOM API—no template strings)
+  if (!list) return;
+  list.innerHTML = "";
+
+  rows.forEach((r) => {
+    const row = document.createElement("div");
+    row.className = "glass rounded-xl p-3 flex items-center justify-between";
+
+    // Left: Start time
+    const left = document.createElement("div");
+    const leftLbl = document.createElement("div");
+    leftLbl.className = "text-xs opacity-70";
+    leftLbl.textContent = "Start";
+    const leftVal = document.createElement("div");
+    leftVal.className = "text-sm tabular-nums";
+    leftVal.textContent = new Date(r.start).toLocaleTimeString();
+    left.appendChild(leftLbl);
+    left.appendChild(leftVal);
+
+    // Center: Duration
+    const mid = document.createElement("div");
+    mid.className = "text-center";
+    const midLbl = document.createElement("div");
+    midLbl.className = "text-xs opacity-70";
+    midLbl.textContent = "Duration";
+    const midVal = document.createElement("div");
+    midVal.className = "text-lg font-semibold tabular-nums";
+    midVal.textContent = fmt(r.durationMs);
+    mid.appendChild(midLbl);
+    mid.appendChild(midVal);
+
+    // Right: Rest + Cycle
+    const right = document.createElement("div");
+    right.className = "text-right";
+    const rightLbl = document.createElement("div");
+    rightLbl.className = "text-xs opacity-70";
+    rightLbl.textContent = "Rest";
+    const rightVal = document.createElement("div");
+    rightVal.className = "text-sm tabular-nums";
+    rightVal.textContent = (r.restMs == null ? "—" : fmt(r.restMs));
+    const cycle = document.createElement("div");
+    cycle.className = "text-[10px] opacity-70 mt-1";
+    cycle.textContent = "Cycle: " + (r.cycleMs == null ? "—" : fmt(r.cycleMs));
+
+    right.appendChild(rightLbl);
+    right.appendChild(rightVal);
+    right.appendChild(cycle);
+
+    row.appendChild(left);
+    row.appendChild(mid);
+    row.appendChild(right);
+
+    list.appendChild(row);
+  });
+}
 
   function startTicker(){
     if (tick) clearInterval(tick);
