@@ -20,6 +20,16 @@
   :root {
     --retro-font: 'Press Start 2P', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
+   /* Title: scale down on small screens, expand gradually */
+  .title-pixel {
+    font-size: 1rem;             /* default ~16px */
+  }
+  @media (min-width: 480px) { 
+    .title-pixel { font-size: 1.25rem; } 
+  }
+  @media (min-width: 768px) { 
+    .title-pixel { font-size: 1.5rem; } 
+  }
   /* Apply globally, but keep paragraphs small so it’s readable */
   body, button, .retro {
     font-family: var(--retro-font);
@@ -30,6 +40,7 @@
     letter-spacing: 1px;
     text-transform: none; /* keep your uppercase if you like; set to none for pixel feel */
   }
+  
   @keyframes klaxonPulse {
     0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px rgba(255,0,0,0.0)); }
     50% { transform: scale(1.15) rotate(-5deg); filter: drop-shadow(0 0 14px rgba(255,0,0,0.9)); }
@@ -89,6 +100,7 @@
       mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
       opacity: .4;
     }
+  <button id="bigTap" class="relative isolate w-60 h-60 rounded-full ...">
   /* help modal entrance */
   #helpModal:not(.hidden) .glass {
     animation: modalPop 220ms ease-out both;
@@ -212,7 +224,7 @@
     Force 5-1-1
   </button>
   <!-- HELP MODAL -->
-<div id="helpModal" class="fixed inset-0 hidden z-40">
+  <div id="helpModal" class="fixed inset-0 hidden z-40">
   <!-- Backdrop -->
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
