@@ -47,7 +47,29 @@
     const ss = s % 60;
     return mm + ":" + String(ss).padStart(2,"0");
   }
-  // ⬇️ Add these BELOW fmt()
+// Flash the big button for 1s: green (ok=true) or yellow (ok=false)
+// Includes distinct haptics for colorblind-friendly feedback
+function flashIndicator(ok) {
+  const btn = document.getElementById('bigTap');
+  if (!btn) return;
+
+  btn.classList.remove('flash-ok', 'flash-warn');
+  void btn.offsetWidth; // reflow so re-adding class retriggers
+
+  btn.classList.add(ok ? 'flash-ok' : 'flash-warn');
+
+  // Haptics: OK = longer pattern, WARN = shorter
+  try {
+    if (navigator.vibrate) {
+      ok ? navigator.vibrate([30, 70, 30]) : navigator.vibrate([12, 50, 12]);
+    }
+  } catch {}
+
+  setTimeout(() => {
+    btn.classList.remove('flash-ok', 'flash-warn');
+  }, 1000);
+}
+  
 function isFiveOneOne(rows) {
   const now = Date.now();
   const HOUR = 60 * 60 * 1000;
