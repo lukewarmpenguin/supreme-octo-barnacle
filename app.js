@@ -47,6 +47,46 @@
     const ss = s % 60;
     return mm + ":" + String(ss).padStart(2,"0");
   }
+  // ⬇️ Add these BELOW fmt()
+function isFiveOneOne(rows) {
+  const now = Date.now();
+  const HOUR = 60 * 60 * 1000;
+  const MIN1 = 60 * 1000;
+  const MIN5 = 5 * 60 * 1000;
+
+  // rows are most-recent-first; look at the last hour
+  const windowRows = rows.filter(r => r.end >= (now - HOUR));
+  if (windowRows.length < 6) return false; // not enough density to call it
+
+  let meets = 0;
+  windowRows.forEach(r => {
+    const okDuration = r.durationMs >= MIN1;
+    const okInterval = (r.intervalMs != null) && (r.intervalMs <= MIN5);
+    if (okDuration && okInterval) meets++;
+  });
+
+  const ratio = meets / windowRows.length;
+  return ratio >= 0.8; // 80% of last-hour entries meet both conditions
+}
+
+function showFiveOneOneAlert() {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;               // safe-guard if HTML not present
+  overlay.classList.remove('hidden'); // show overlay
+
+  // Haptics + a little celebration
+  try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
+  try {
+    const defaults = { spread: 80, origin: { y: 0.7 } };
+    confetti(Object.assign({}, defaults, { particleCount: 150, startVelocity: 55 }));
+  } catch(e){}
+}
+
+function hideFiveOneOneAlert() {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+}
 
   function render() {
     if (currentStart) {
@@ -116,6 +156,10 @@
     currentStart = null;
     fire(.8); vibrate([8,40,8]);
     save(); render(); startTicker();
+
+    
+    // 5-1-1 check after logging a contraction
+if (isFiveOneOne(rows)) showFiveOneOneAlert();
   }
 
   function resetAll(){
@@ -146,6 +190,9 @@
   btnEnd.addEventListener("click", endCurrent);
   btnCsv.addEventListener("click", toCsv);
   btnReset.addEventListener("click", resetAll);
+  // ⬇️ Add this under your other listeners
+const dismissBtn = document.getElementById('alertDismiss');
+if (dismissBtn) dismissBtn.addEventListener('click', hideFiveOneOneAlert);
 
   load(); render(); startTicker();
 })();
