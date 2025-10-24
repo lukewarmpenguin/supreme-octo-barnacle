@@ -130,6 +130,92 @@
     <!-- ...rest of list... -->
   </div>
 </div>
+
+   /* ---- THEME TOKENS ---- */
+  :root{
+    --bg: #0a0b1e;
+    --fg: #e6f7ff;
+    --muted: rgba(230,247,255,.7);
+    --glass: rgba(255,255,255,.06);
+    --glass-border: rgba(255,255,255,.14);
+
+    --neon-cyan: #22d3ee;
+    --neon-magenta: #d946ef;
+    --neon-lime: #a3e635;
+    --btn-grad-a: #3b82f6;
+    --btn-grad-b: #a855f7;
+
+    --radius-xl: 1.25rem;
+    --radius-lg: .9rem;
+
+    --title-sm: 1rem;     /* mobile title */
+    --title-md: 1.25rem;  /* small tablets */
+    --title-lg: 1.5rem;   /* desktop */
+
+    --btn-font: .85rem;   /* big button label */
+    --meta-font: .7rem;   /* tiny hints */
+  }
+
+  html, body { background: var(--bg); color: var(--fg); }
+
+  /* Pixel font only when opted in */
+  .pixel { font-family:'Press Start 2P', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  .tight { line-height:1.15; }
+
+  /* Title sizes scale up by breakpoint */
+  .title-pixel { font-size: var(--title-sm); }
+  @media (min-width: 480px){ .title-pixel{ font-size: var(--title-md); } }
+  @media (min-width: 768px){ .title-pixel{ font-size: var(--title-lg); } }
+
+  /* Container spacing & safe areas */
+  .wrap { max-width: 640px; margin-inline:auto; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+
+  /* Glass card look (used by panels/modals) */
+  .glass { background: var(--glass); border:1px solid var(--glass-border); backdrop-filter: blur(8px); border-radius: var(--radius-xl); }
+
+  /* Header layout */
+  header.appbar{ margin:18px 0 12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  header .title { text-transform: uppercase; letter-spacing:.06em;
+    text-shadow: 0 0 10px rgba(34,211,238,.25), 0 0 22px rgba(217,70,239,.2); }
+
+  /* Help button */
+  .btn-ghost { border:1px solid var(--glass-border); background: rgba(255,255,255,.08); border-radius:999px; padding:.5rem .65rem; }
+  .btn-ghost:hover { background: rgba(255,255,255,.14); }
+
+  /* Big round button */
+  #bigTap{ position:relative; isolation:isolate; width:15rem; height:15rem; border-radius:9999px; }
+  @media (max-width: 380px){ #bigTap{ width:14rem; height:14rem; } }
+
+  #bigTap::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background: radial-gradient(80% 80% at 30% 25%, rgba(255,255,255,.18), transparent 60%),
+                linear-gradient(135deg, var(--btn-grad-a), var(--btn-grad-b));
+    filter: saturate(1.1);
+    z-index:1;
+  }
+  #bigTap::after{
+    content:""; position:absolute; inset:-3px; border-radius:inherit;
+    box-shadow:
+      0 0 24px rgba(34,211,238,.35),
+      0 0 46px rgba(217,70,239,.35),
+      inset 0 0 22px rgba(255,255,255,.12);
+    z-index:0;
+  }
+  /* Label in button */
+  .btn-main { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; }
+  .btn-top { font-size: .62rem; opacity:.85; letter-spacing:.35em; text-transform:uppercase; }
+  .btn-label { font-size: var(--btn-font); }
+
+  /* History list */
+  .hist-card{ border-radius: var(--radius-lg); border:1px solid var(--glass-border); background: rgba(255,255,255,.04); padding:.75rem .9rem; }
+  .hist-meta{ font-size: var(--meta-font); color: var(--muted); }
+
+  /* Help modal polish */
+  #helpModal .glass{ padding: 1rem 1.1rem; }
+  #helpModal ol{ font-size:.9rem; line-height:1.45; }
+
+  /* Flash overlay (from earlier) stays; ensure above content */
+  #bigTap.flash-ok::after, #bigTap.flash-warn::after{ z-index: 60; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -140,16 +226,12 @@
   </div>
 
   <main class="max-w-md mx-auto p-5 pb-24">
-    <header class="mt-6 mb-6 flex items-center justify-between">
-      <h1 class="pixel pixel-tight title-pixel font-black tracking-wide uppercase drop-shadow-[0_0_12px_rgba(0,255,255,0.35)]">
-          Neo Contraction Tracker
-      </h1>
-
-     <button id="openHelp" aria-label="How to use"
-       class="ml-3 px-3 py-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/15 active:bg-white/20">
-        <span class="pixel" style="font-size:.9rem">?</span>
-     </button>
-    </header>
+   <header class="appbar wrap">
+  <h1 class="title pixel title-pixel tight">Neo Contraction Tracker</h1>
+  <button id="openHelp" class="btn-ghost" aria-label="How to use">
+    <span class="pixel" style="font-size:.9rem">?</span>
+  </button>
+   </header>
 
     <section class="glass rounded-2xl p-5 shadow-[0_0_30px_rgba(0,255,255,0.08)] relative overflow-hidden">
       <div class="flex items-center justify-between">
@@ -165,17 +247,13 @@
       </div>
 
       <div class="mt-6 flex items-center justify-center">
-        <button id="bigTap" class="relative isolate w-56 h-56 rounded-full group focus:outline-none">
-          <span class="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400 via-fuchsia-400 to-violet-500 blur-xl opacity-60 group-active:opacity-80 transition"></span>
-          <span class="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-500/30 via-fuchsia-500/30 to-violet-600/30 border border-white/20"></span>
-          <span class="absolute inset-3 rounded-full bg-black/40 border border-white/10 shadow-inner"></span>
-          <span class="relative z-10 h-full w-full flex flex-col items-center justify-center">
-            <span class="text-xs uppercase tracking-[0.35em] opacity-90">One‑Tap</span>
-            <span id="bigTapLabel" class="text-2xl font-extrabold mt-1">Start Contraction</span>
-            <span class="text-[10px] opacity-70 mt-2">Ends current & starts new</span>
-          </span>
-        </button>
+        <button id="bigTap" class="relative isolate mx-auto block">
+      <div class="btn-main">
+      <span class="btn-top">One-Tap</span>
+      <span id="bigTapLabel" class="pixel btn-label">Start Contraction</span>
+      <span class="hist-meta" style="margin-top:.35rem;">Ends current & starts new</span>
       </div>
+        </button>
 
       <div class="mt-5 grid grid-cols-3 gap-3">
         <button id="endCurrent" class="px-3 py-3 rounded-xl bg-white/10 border border-white/10 hover:bg-white/15">End Current</button>
@@ -265,6 +343,12 @@
       <li>• Use <span class="pixel">End Current</span> only if a contraction stops and you’re not immediately starting the next.</li>
       <li>• Button flashes <b>green</b> for ≥1:00, <b>yellow</b> for &lt;1:00.</li>
       <li>• <span class="pixel">Export CSV</span> to share timing with your provider.</li>
+      <li class="hist-card">
+       <div class="flex justify-between">
+       <div class="pixel">1:12</div>
+       <div class="hist-meta">Interval 4:57 • 10:41 PM</div>
+       </div>
+      </li>
     </ol>
   </div>
 </div>
