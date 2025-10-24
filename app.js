@@ -11,10 +11,12 @@ const btnCsv    = $("btnCsv");          // was #exportCsv
 const btnReset  = $("btnReset");        // was #resetAll
 const list      = $("rows");            // was #history
 
-  let currentStart = null;
-  let lastStart = null;
-  let rows = []; // {id, start, end, durationMs, intervalMs}
-  let tick = null;
+let currentStart = null;
+let currentPhase = null; // "contraction" | "rest" | null
+let lastStart = null;    // keep if you want, not required now
+// rows: contraction entries only; when the next rest ends, we attach restMs + cycleMs to rows[0]
+let rows = []; // {id, start, end, durationMs, restMs?, cycleMs?}
+let tick = null;
 
   function load() {
     try {
@@ -113,34 +115,39 @@ function hideFiveOneOneAlert() {
 }
 
   function render() {
-    if (currentStart) {
-      lblBig.textContent = "Next Contraction";
-if (elMeta) elMeta.textContent = "Started " + new Date(currentStart).toLocaleTimeString();
-    } else {
-     lblBig.textContent = "Start Contraction";
-if (elMeta) elMeta.textContent = "Not running";
-if (elElapsed) elElapsed.textContent = "—";
-    }
-    list.innerHTML = "";
-    rows.forEach(r => {
-      const row = document.createElement("div");
-      row.className = "glass rounded-xl p-3 flex items-center justify-between";
-      row.innerHTML = `
-        <div>
-          <div class="text-xs opacity-70">Start</div>
-          <div class="text-sm tabular-nums">${new Date(r.start).toLocaleTimeString()}</div>
-        </div>
-        <div class="text-center">
-          <div class="text-xs opacity-70">Duration</div>
-          <div class="text-lg font-semibold tabular-nums">${fmt(r.durationMs)}</div>
-        </div>
-        <div class="text-right">
-          <div class="text-xs opacity-70">Interval</div>
-          <div class="text-sm tabular-nums">${r.intervalMs==null ? "—" : fmt(r.intervalMs)}</div>
-        </div>`;
-      list.appendChild(row);
-    });
+   if (currentStart) {
+  if (currentPhase === "contraction") {
+    lblBig.textContent = "End Contraction → Start Rest";
+  } else {
+    lblBig.textContent = "End Rest → Start Contraction";
   }
+  if (elMeta) elMeta.textContent = (currentPhase || "—") + " started " + new Date(currentStart).toLocaleTimeString();
+} else {
+  lblBig.textContent = "Start Contraction";
+  if (elMeta) elMeta.textContent = "Not running";
+  if (elElapsed) elElapsed.textContent = "—";
+}
+
+list.innerHTML = "";
+rows.forEach(r => {
+  const row = document.createElement("div");
+  row.className = "glass rounded-xl p-3 flex items-center justify-between";
+  row.innerHTML = `
+    <div>
+      <div class="text-xs opacity-70">Start</div>
+      <div class="text-sm tabular-nums">${new Date(r.start).toLocaleTimeString()}</div>
+    </div>
+    <div class="text-center">
+      <div class="text-xs opacity-70">Duration</div>
+      <div class="text-lg font-semibold tabular-nums">${fmt(r.durationMs)}</div>
+    </div>
+    <div class="text-right">
+      <div class="text-xs opacity-70">Rest</div>
+      <div class="text-sm tabular-nums">${r.restMs == null ? "—" : fmt(r.restMs)}</div>
+      <div class="text-[10px] opacity-70 mt-1">Cycle: ${r.cycleMs == null ? "—" : fmt(r.cycleMs)}</div>
+    </div>`;
+  list.appendChild(row);
+});
 
   function startTicker(){
     if (tick) clearInterval(tick);
