@@ -151,7 +151,7 @@ if (elElapsed) elElapsed.textContent = "—";
 }, 200);
   }
 
-  function handleBigTap(){
+function handleBigTap(){
   const t = Date.now();
 
   // A) Start first contraction (no flashing here—nothing ended yet)
@@ -183,14 +183,15 @@ if (elElapsed) elElapsed.textContent = "—";
   fire(1); vibrate([15,60,15]);
   save(); render(); startTicker();
 
-  // ✅ 1-second glow + haptics based on the duration we just ended
+  // 1s visual indicator + (Android) haptics
   flashIndicator(durationMs >= 60 * 1000);
 
-  // safety nudge check
+  // 5-1-1 safety check
   if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
- function endCurrent(){
+  function endCurrent(){
   if (!currentStart) return;
+
   const t = Date.now();
   const durationMs = t - currentStart;
 
@@ -207,9 +208,10 @@ if (elElapsed) elElapsed.textContent = "—";
   fire(.8); vibrate([8,40,8]);
   save(); render(); startTicker();
 
-  // ✅ flash after ending
+  // 1s visual indicator + (Android) haptics
   flashIndicator(durationMs >= 60 * 1000);
 
+  // 5-1-1 safety check
   if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
 // ---- Help modal wiring (simple & reliable) ----
