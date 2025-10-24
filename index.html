@@ -114,6 +114,22 @@
   letter-spacing: 0.05em;
   line-height: 1.2;
 }
+  <!-- HELP MODAL -->
+<div id="helpModal" class="fixed inset-0 hidden z-40">
+  <!-- Backdrop -->
+  <div id="helpBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <!-- Panel -->
+  <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass rounded-2xl p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="pixel" style="font-size:1rem">How to use Neo CT</div>
+      <button id="closeHelp"
+        class="px-2 py-1 rounded-md bg-white/10 border border-white/20 hover:bg-white/15">
+        Close
+      </button>
+    </div>
+    <!-- ...rest of list... -->
+  </div>
+</div>
   </style>
 </head>
 <body class="min-h-screen">
