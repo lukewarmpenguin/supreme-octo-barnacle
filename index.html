@@ -128,16 +128,17 @@
   </main>
 
   <!-- Load app code -->
-  <script src="app.js?v=4"></script>
+<script src="app.js"></script>
 
   <!-- Register service worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js?v=4').catch(console.error);
-      });
-    }
-  </script>
+<script src="app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').catch(console.error);
+    });
+  }
+</script>
 
   <!-- 5-1-1 ALERT OVERLAY -->
   <div id="alertOverlay" class="fixed inset-0 hidden z-50">
