@@ -210,7 +210,33 @@ function hideFiveOneOneAlert() {
 
   if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
+  (function wireHelp(){
+  const modal = document.getElementById('helpModal');
+  const btnOpen = document.getElementById('openHelp');
+  const btnClose = document.getElementById('closeHelp');
 
+  if (!modal) return;
+
+  const show = () => {
+    modal.classList.remove('hidden');
+    // move focus to Close for accessibility
+    btnClose && btnClose.focus();
+  };
+  const hide = () => modal.classList.add('hidden');
+
+  btnOpen && btnOpen.addEventListener('click', show);
+  btnClose && btnClose.addEventListener('click', hide);
+
+  // click backdrop to close (only if you click the outer container)
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) hide();
+  });
+
+  // ESC to close
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('hidden') && e.key === 'Escape') hide();
+  });
+})();
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
     fire(.5); vibrate(25);
