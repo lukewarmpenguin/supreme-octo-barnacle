@@ -1,13 +1,15 @@
 (function(){
-  const $ = sel => document.querySelector(sel);
-  const elElapsed = $("#currentElapsed");
-  const elMeta = $("#currentMeta");
-  const btnBig = $("#bigTap");
-  const lblBig = $("#bigTapLabel");
-  const btnEnd = $("#endCurrent");
-  const btnCsv = $("#exportCsv");
-  const btnReset = $("#resetAll");
-  const list = $("#history");
+const $ = (id) => document.getElementById(id);
+
+// IDs that match your current index.html template
+const elElapsed = $("elElapsed");       // was #currentElapsed
+const elMeta    = $("currentMeta");     // optional: we'll add this small div in HTML below
+const btnBig    = $("bigTap");
+const lblBig    = $("bigTapLabel");
+const btnEnd    = $("btnEnd");          // was #endCurrent
+const btnCsv    = $("btnCsv");          // was #exportCsv
+const btnReset  = $("btnReset");        // was #resetAll
+const list      = $("rows");            // was #history
 
   let currentStart = null;
   let lastStart = null;
@@ -113,11 +115,11 @@ function hideFiveOneOneAlert() {
   function render() {
     if (currentStart) {
       lblBig.textContent = "Next Contraction";
-      elMeta.textContent = "Started " + new Date(currentStart).toLocaleTimeString();
+if (elMeta) elMeta.textContent = "Started " + new Date(currentStart).toLocaleTimeString();
     } else {
-      lblBig.textContent = "Start Contraction";
-      elMeta.textContent = "Not running";
-      elElapsed.textContent = "—";
+     lblBig.textContent = "Start Contraction";
+if (elMeta) elMeta.textContent = "Not running";
+if (elElapsed) elElapsed.textContent = "—";
     }
     list.innerHTML = "";
     rows.forEach(r => {
@@ -143,10 +145,10 @@ function hideFiveOneOneAlert() {
   function startTicker(){
     if (tick) clearInterval(tick);
     if (!currentStart) return;
-    tick = setInterval(()=>{
-      const now = Date.now();
-      elElapsed.textContent = fmt(now - currentStart);
-    }, 200);
+  tick = setInterval(()=>{
+  const now = Date.now();
+  if (elElapsed) elElapsed.textContent = fmt(now - currentStart);
+}, 200);
   }
 
   function handleBigTap(){
