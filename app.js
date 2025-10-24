@@ -193,6 +193,8 @@ if (isFiveOneOne(rows)) showFiveOneOneAlert();
   // ⬇️ Add this under your other listeners
 const dismissBtn = document.getElementById('alertDismiss');
 if (dismissBtn) dismissBtn.addEventListener('click', hideFiveOneOneAlert);
+  const forceBtn = document.getElementById('force511');
+if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
 
   load(); render(); startTicker();
 })();
