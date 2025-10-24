@@ -186,15 +186,33 @@ if (isFiveOneOne(rows)) showFiveOneOneAlert();
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
-  btnBig.addEventListener("click", handleBigTap);
-  btnEnd.addEventListener("click", endCurrent);
-  btnCsv.addEventListener("click", toCsv);
-  btnReset.addEventListener("click", resetAll);
-  // ⬇️ Add this under your other listeners
-const dismissBtn = document.getElementById('alertDismiss');
-if (dismissBtn) dismissBtn.addEventListener('click', hideFiveOneOneAlert);
-const forceBtn = document.getElementById('force511');
-if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
+// Existing core listeners (these target elements that already exist above the scripts)
+btnBig.addEventListener("click", handleBigTap);
+btnEnd.addEventListener("click", endCurrent);
+btnCsv.addEventListener("click", toCsv);
+btnReset.addEventListener("click", resetAll);
 
-  load(); render(); startTicker();
+// 🔧 Wire elements that are defined *below* the scripts (overlay + force button)
+function wireLateElements() {
+  const dismissBtn = document.getElementById('alertDismiss');
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', hideFiveOneOneAlert);
+  }
+
+  const forceBtn = document.getElementById('force511');
+  if (forceBtn) {
+    forceBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showFiveOneOneAlert();
+    });
+  }
+}
+
+// Try now (in case DOM is already ready), and also after DOM is ready
+wireLateElements();
+document.addEventListener('DOMContentLoaded', wireLateElements);
+
+load(); 
+render(); 
+startTicker();
 })();
