@@ -210,33 +210,35 @@ function hideFiveOneOneAlert() {
 
   if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
-  (function wireHelp(){
+ // ---- Robust Help modal wiring (delegated) ----
+(function wireHelpDelegated(){
   const modal = document.getElementById('helpModal');
-  const btnOpen = document.getElementById('openHelp');
-  const btnClose = document.getElementById('closeHelp');
-
   if (!modal) return;
 
   const show = () => {
     modal.classList.remove('hidden');
-    // move focus to Close for accessibility
-    btnClose && btnClose.focus();
+    const closeBtn = document.getElementById('closeHelp');
+    closeBtn && closeBtn.focus();
   };
   const hide = () => modal.classList.add('hidden');
 
-  btnOpen && btnOpen.addEventListener('click', show);
-  btnClose && btnClose.addEventListener('click', hide);
+  // Single document listener handles all clicks
+  document.addEventListener('click', (e) => {
+    const openBtn = e.target.closest('#openHelp');
+    const closeBtn = e.target.closest('#closeHelp');
 
-  // click backdrop to close (only if you click the outer container)
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) hide();
+    if (openBtn) { e.preventDefault(); show(); }
+    else if (closeBtn) { e.preventDefault(); hide(); }
+    // click on backdrop (the outer modal div) closes
+    else if (e.target === modal) { hide(); }
   });
 
   // ESC to close
   document.addEventListener('keydown', (e) => {
-    if (!modal.classList.contains('hidden') && e.key === 'Escape') hide();
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) hide();
   });
 })();
+  
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
     fire(.5); vibrate(25);
