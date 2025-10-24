@@ -210,33 +210,36 @@ function hideFiveOneOneAlert() {
 
   if (isFiveOneOne(rows)) showFiveOneOneAlert();
 }
- // ---- Robust Help modal wiring (delegated) ----
-(function wireHelpDelegated(){
-  const modal = document.getElementById('helpModal');
-  if (!modal) return;
+// ---- Help modal wiring (simple & reliable) ----
+(function wireHelpOnce(){
+  function setup() {
+    const modal = document.getElementById('helpModal');
+    const open = document.getElementById('openHelp');
+    const close = document.getElementById('closeHelp');
+    const backdrop = document.getElementById('helpBackdrop');
+    if (!modal) return;
 
-  const show = () => {
-    modal.classList.remove('hidden');
-    const closeBtn = document.getElementById('closeHelp');
-    closeBtn && closeBtn.focus();
-  };
-  const hide = () => modal.classList.add('hidden');
+    const show = () => {
+      modal.classList.remove('hidden');
+      close && close.focus();
+    };
+    const hide = () => modal.classList.add('hidden');
 
-  // Single document listener handles all clicks
-  document.addEventListener('click', (e) => {
-    const openBtn = e.target.closest('#openHelp');
-    const closeBtn = e.target.closest('#closeHelp');
+    open  && open.addEventListener('click', (e) => { e.preventDefault(); show(); });
+    close && close.addEventListener('click', (e) => { e.preventDefault(); hide(); });
+    backdrop && backdrop.addEventListener('click', (e) => { e.preventDefault(); hide(); });
 
-    if (openBtn) { e.preventDefault(); show(); }
-    else if (closeBtn) { e.preventDefault(); hide(); }
-    // click on backdrop (the outer modal div) closes
-    else if (e.target === modal) { hide(); }
-  });
+    // ESC to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) hide();
+    });
+  }
 
-  // ESC to close
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) hide();
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
 })();
   
   function resetAll(){
