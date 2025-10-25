@@ -306,6 +306,35 @@ function handleBigTap(){
     setup();
   }
 })();
+
+  // ---- About modal wiring ----
+(function wireAboutOnce(){
+  function setup() {
+    const modal = document.getElementById('aboutModal');
+    const open = document.getElementById('openAbout');
+    const close = document.getElementById('closeAbout');
+    if (!modal) return;
+
+    const show = () => {
+      modal.classList.remove('hidden');
+      close && close.focus();
+    };
+    const hide = () => modal.classList.add('hidden');
+
+    open  && open.addEventListener('click', (e) => { e.preventDefault(); show(); });
+    close && close.addEventListener('click', (e) => { e.preventDefault(); hide(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) hide();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+})();
   
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
