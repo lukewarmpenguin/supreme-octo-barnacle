@@ -68,6 +68,51 @@
     .hist-card{border-radius:.75rem;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);padding:.75rem .9rem;}
     .hist-meta{font-size:.75rem;opacity:.8}
 
+    /* tighter line height for pixel font */
+.tight { line-height: 1.1; }
+
+/* responsive title + subtitle sizing (clamped) */
+.title-pixel {
+  /* ~16–24px depending on screen width */
+  font-size: clamp(1rem, 3.2vw, 1.5rem);
+  max-width: 20ch; /* avoid 2-line wraps */
+}
+.subtitle {
+  /* ~10–12px */
+  font-size: clamp(0.625rem, 1.8vw, 0.75rem);
+  letter-spacing: 0.18em;
+}
+
+/* logo size */
+.logo-size { width: 3rem; height: 3rem; }          /* 48px */
+@media (min-width: 480px){ .logo-size { width: 3.25rem; height: 3.25rem; } }
+@media (min-width: 768px){ .logo-size { width: 3.5rem; height: 3.5rem; } }
+
+/* neon flicker intensity tuned for small screens */
+@keyframes neon-flicker {
+  0%,18%,22%,25%,53%,57%,100% {
+    text-shadow:
+      0 0 2px #fff,
+      0 0 6px #0ff,
+      0 0 12px #0ff,
+      0 0 20px #0ff;
+  }
+  20%,24%,55% { text-shadow: none; }
+}
+/* reduce glow on very small screens to prevent overflow aura */
+@media (max-width: 380px){
+  .neon-glow {
+    animation-duration: 3s;
+  }
+  .neon-glow {
+    text-shadow:
+      0 0 1px #fff,
+      0 0 4px #0ff,
+      0 0 8px #0ff,
+      0 0 14px #0ff;
+  }
+}
+
 
 @keyframes neon-flicker {
   0%, 18%, 22%, 25%, 53%, 57%, 100% {
@@ -98,28 +143,26 @@
 </head>
 <body class="min-h-screen">
   <!-- Header -->
-  <header class="mt-6 mb-6 flex items-center justify-between px-4">
+ <header class="flex items-center justify-between mb-4">
+  <!-- Left: title + subtitle -->
+  <div class="min-w-0">
+    <h1 class="pixel title-pixel tight text-cyan-400 drop-shadow neon-glow truncate">
+      Nestling Contraction Counter
     </h1>
-    <button id="openHelp" aria-label="How to use"
-      class="px-3 py-2 rounded-full border border-white/20 bg-white/10 hover:bg-white/15 active:bg-white/20">
-      <span class="pixel" style="font-size:.9rem">?</span>
-    </button>
-  </header>
-<header class="relative mb-6 text-center">
-  <h1 class="pixel text-3xl text-cyan-400 drop-shadow">
-    Nestling Contraction Counter
-  </h1>
-  <p class="text-xs uppercase tracking-widest text-fuchsia-300 opacity-80 mt-1">
-    A Lukewarmpenguin Project
-  </p>
- <img
-  src="images/lukewarmpenguin-logo.png"
-  alt="Lukewarmpenguin Logo"
-  class="w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
-/>
-  />
-</header>
+    <p class="subtitle tight uppercase tracking-widest text-fuchsia-300/90 mt-1">
+      A Lukewarmpenguin Project
+    </p>
+  </div>
 
+  <!-- Right: logo -->
+  <div class="flex-shrink-0 ml-3">
+    <img
+      src="images/lukewarmpenguin-logo.png"
+      alt="Lukewarmpenguin Logo"
+      class="logo-size rounded-full logo-glow hover:scale-105 transition-transform"
+    />
+  </div>
+</header>
   <!-- Main card -->
   <main class="px-4">
     <section class="glass p-4 md:p-6">
