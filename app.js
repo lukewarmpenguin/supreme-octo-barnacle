@@ -407,7 +407,6 @@ function wireLateElements() {
     if (aboutBackdrop) aboutBackdrop.addEventListener('click', hide);
     document.addEventListener('keydown', (e)=>{ if (e.key==='Escape' && !aboutModal.classList.contains('hidden')) hide(e); });
   }
-}
 
 // Try now and on DOM ready
 wireLateElements();
