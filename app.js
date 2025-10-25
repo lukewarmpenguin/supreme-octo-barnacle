@@ -307,34 +307,22 @@ function handleBigTap(){
   }
 })();
 
-  // ---- About modal wiring ----
-(function wireAboutOnce(){
-  function setup() {
-    const modal = document.getElementById('aboutModal');
-    const open = document.getElementById('openAbout');
-    const close = document.getElementById('closeAbout');
-    if (!modal) return;
+  // About modal
+  const openAbout  = document.getElementById('openAbout');
+  const aboutModal = document.getElementById('aboutModal');
+  const closeAbout = document.getElementById('closeAbout');
+  const aboutBackdrop = document.getElementById('aboutBackdrop');
 
-    const show = () => {
-      modal.classList.remove('hidden');
-      close && close.focus();
-    };
-    const hide = () => modal.classList.add('hidden');
+  if (openAbout && aboutModal) {
+    const show = (e)=>{ e && e.preventDefault(); aboutModal.classList.remove('hidden'); };
+    const hide = (e)=>{ e && e.preventDefault(); aboutModal.classList.add('hidden'); };
 
-    open  && open.addEventListener('click', (e) => { e.preventDefault(); show(); });
-    close && close.addEventListener('click', (e) => { e.preventDefault(); hide(); });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) hide();
-    });
+    openAbout.addEventListener('click', show);
+    openAbout.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') show(e); });
+    closeAbout && closeAbout.addEventListener('click', hide);
+    aboutBackdrop && aboutBackdrop.addEventListener('click', hide);
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape' && !aboutModal.classList.contains('hidden')) hide(e); });
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setup);
-  } else {
-    setup();
-  }
-})();
   
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
