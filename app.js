@@ -333,23 +333,47 @@ function handleBigTap(){
     save(); render(); startTicker();
   }
 
-  function toCsv(){
-    const headers = ["Start","End","Duration (mm:ss)","Interval Since Prior Start (mm:ss)"];
-    const lines = rows.slice().reverse().map(r => [
-      new Date(r.start).toLocaleString(),
-      new Date(r.end).toLocaleString(),
-      fmt(r.durationMs),
-      r.intervalMs==null ? "" : fmt(r.intervalMs)
-    ]);
-    const csv = [headers, ...lines]
-      .map(arr => arr.map(v => /[,\n"]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v).join(","))
-      .join("\n");
-    const blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "contractions-" + new Date().toISOString().slice(0,19).replace(/[:T]/g,'-') + ".csv";
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  }
+ function toCsv(){
+  // Columns match the new data model
+  const headers = [
+    "Start (local)",
+    "End (local)",
+    "Contraction (mm:ss)",
+    "Rest (mm:ss)",
+    "Cycle (mm:ss)"
+  ];
+
+  // rows are most-recent-first; CSV should be chronological
+  const lines = rows.slice().reverse().map(r => [
+    new Date(r.start).toLocaleString(),
+    new Date(r.end).toLocaleString(),
+    fmt(r.durationMs),
+    r.restMs  == null ? "" : fmt(r.restMs),
+    r.cycleMs == null ? "" : fmt(r.cycleMs)
+  ]);
+
+  // RFC4180-safe quoting for commas/quotes/newlines
+  const csv = [headers, ...lines]
+    .map(arr =>
+      arr.map(v => {
+        const s = String(v ?? "");
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(",")
+    )
+    .join("\n");
+
+  // Download
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  a.href = url;
+  a.download = `nestling-cc_${stamp}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 // ===== Core listeners (elements that already exist above the scripts) =====
 btnBig   && btnBig.addEventListener("click", handleBigTap);
