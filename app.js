@@ -355,14 +355,8 @@ function wireLateElements() {
     dismissBtn.addEventListener('click', hideFiveOneOneAlert);
   }
 
-  const forceBtn = document.getElementById('force511');
-  if (forceBtn) {
-    forceBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      showFiveOneOneAlert();
-    });
-  }
-}
+const forceBtn = document.getElementById('force511');
+if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
 
 // Try now (in case DOM is already ready), and also after DOM is ready
 wireLateElements();
