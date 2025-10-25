@@ -129,10 +129,11 @@
   aria-label="Open help">?</button>
   
   <!-- Logo in the top-right -->
- <img
+<img
+  id="openAbout"
   src="./images/lukewarmpenguin-logo.png?v=2"
-  alt="Lukewarmpenguin Logo"
-  class="absolute right-0 header-icon-align w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
+  alt="About the Developer"
+  class="absolute right-0 header-icon-align w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform cursor-pointer"
 />
 
   <!-- Centered, wrapping title + tagline -->
@@ -212,6 +213,29 @@
   </div>
 </div>
 
+  <!-- ABOUT MODAL -->
+<div id="aboutModal" class="fixed inset-0 hidden z-40">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+  <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass pt-7 pb-5 px-5 rounded-xl border border-white/20 shadow-lg help">
+    <div class="flex items-center justify-between mb-3">
+      <div class="pixel text-cyan-300 text-lg drop-shadow">About the Developer</div>
+      <button id="closeAbout"
+        class="px-2 py-1 rounded-md bg-white/10 border border-white/20 hover:bg-white/15 transition">Close</button>
+    </div>
+
+    <div class="space-y-3 leading-6 text-white/90 text-sm">
+      <p>Hey there! I’m <strong>Lukewarmpenguin</strong> — a tech operations nerd who enjoys taking complicated processes and making them friendly and easy to use.</p>
+
+      <p>I built <strong>Nestling Contraction Counter</strong> with the help of ChatGPT as a fun side project while preparing for my own family’s big day. The goal? A simple, calming tool for tracking contractions without stress or clutter.</p>
+
+      <p>This project blends my love of clean design, approachable tech, and a touch of retro-futuristic style. 🐧✨</p>
+
+      <p class="text-xs opacity-70 mt-4">© 2025 Lukewarmpenguin — Created with ❤️ + GPT-5 guidance.</p>
+    </div>
+  </div>
+</div>
+  
   <!-- Scripts LAST (after modal + UI exist) -->
   <script src="app.js"></script>
   <script>
