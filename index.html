@@ -88,79 +88,61 @@
 @media (min-width: 480px){ .logo-size { width: 3.25rem; height: 3.25rem; } }
 @media (min-width: 768px){ .logo-size { width: 3.5rem; height: 3.5rem; } }
 
-/* neon flicker intensity tuned for small screens */
-@keyframes neon-flicker {
-  0%,18%,22%,25%,53%,57%,100% {
-    text-shadow:
-      0 0 2px #fff,
-      0 0 6px #0ff,
-      0 0 12px #0ff,
-      0 0 20px #0ff;
-  }
-  20%,24%,55% { text-shadow: none; }
-}
-/* reduce glow on very small screens to prevent overflow aura */
-@media (max-width: 380px){
-  .neon-glow {
-    animation-duration: 3s;
-  }
-  .neon-glow {
-    text-shadow:
-      0 0 1px #fff,
-      0 0 4px #0ff,
-      0 0 8px #0ff,
-      0 0 14px #0ff;
-  }
+/* Title wraps and scales smoothly */
+.title-wrap{
+  font-size: clamp(1.1rem, 4.5vw, 1.75rem);
+  line-height: 1.15;
+  margin: 0;
+  word-break: normal;
+  white-space: normal;         /* allow wrapping */
+  text-wrap: balance;          /* nicer line breaks on supported browsers */
 }
 
-
-@keyframes neon-flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
-    text-shadow:
-      0 0 2px #fff,
-      0 0 8px #0ff,
-      0 0 16px #0ff,
-      0 0 32px #0ff,
-      0 0 64px #0ff;
-  }
-  20%, 24%, 55% {
-    text-shadow: none;
-  }
+/* Subtle neon text-only glow (no big aura) */
+.neon-text{
+  color: #22d3ee; /* cyan */
+  text-shadow:
+    0 0 1px rgba(255,255,255,0.9),
+    0 0 4px rgba(34,211,238,0.9),
+    0 0 8px rgba(34,211,238,0.5);
 }
 
-.neon-glow {
-  animation: neon-flicker 2.5s infinite alternate;
-}
-    @keyframes logo-pulse {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(0,255,255,0.5)); }
-  50% { filter: drop-shadow(0 0 14px rgba(0,255,255,0.9)); }
+/* Tagline: small, spaced, readable */
+.tagline{
+  font-size: clamp(0.7rem, 2vw, 0.8rem);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(244,114,182,0.9); /* fuchsia-300-ish */
+  margin-top: .35rem;
 }
 
-.logo-glow {
-  animation: logo-pulse 3s infinite ease-in-out;
+/* Optional soft logo glow */
+@keyframes logo-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(34,211,238,0.5)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(34,211,238,0.9)); }
 }
+.logo-glow { animation: logo-pulse 3s infinite ease-in-out; }
   </style>
 </head>
 <body class="min-h-screen">
   <!-- Header -->
- <header class="flex items-center justify-between mb-4">
-  <!-- Left: title + subtitle -->
-  <div class="min-w-0">
-    <h1 class="pixel title-pixel tight text-cyan-400 drop-shadow neon-glow truncate">
+<header class="relative mb-4">
+  <!-- Logo in the top-right -->
+  <img
+    src="./images/lukewarmpenguin-logo.png?v=2"
+    alt="Lukewarmpenguin Logo"
+    class="absolute top-0 right-0 w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
+  />
+
+  <!-- Centered, wrapping title + tagline -->
+  <div class="text-center px-16">
+    <!-- px-16 pads left/right so the logo doesn't overlap on tiny screens -->
+    <h1 class="pixel neon-text title-wrap">
       Nestling Contraction Counter
     </h1>
-    <p class="subtitle tight uppercase tracking-widest text-fuchsia-300/90 mt-1">
+    <p class="tagline">
       A Lukewarmpenguin Project
     </p>
-  </div>
-
-  <!-- Right: logo -->
-  <div class="flex-shrink-0 ml-3">
-    <img
-      src="images/lukewarmpenguin-logo.png"
-      alt="Lukewarmpenguin Logo"
-      class="logo-size rounded-full logo-glow hover:scale-105 transition-transform"
-    />
   </div>
 </header>
   <!-- Main card -->
