@@ -84,6 +84,28 @@ function showFiveOneOneAlert() {
   if (!overlay) return;               // safe-guard if HTML not present
   overlay.classList.remove('hidden'); // show overlay
 
+  // --- 5-1-1 overlay (exposed globally) ---
+window.showFiveOneOneAlert = function () {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+
+  // Haptics + confetti
+  try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
+  try {
+    const defaults = { spread: 80, origin: { y: 0.7 } };
+    confetti(Object.assign({}, defaults, { particleCount: 180, startVelocity: 55 }));
+  } catch(e){}
+};
+
+window.hideFiveOneOneAlert = function () {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+};
+
   // Haptics + a little celebration
   try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
   try {
@@ -361,8 +383,12 @@ function wireLateElements() {
     dismissBtn.addEventListener('click', hideFiveOneOneAlert);
   }
 
-  const forceBtn = document.getElementById('force511');
-  if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
+const forceBtn = document.getElementById('force511');
+if (forceBtn) {
+  forceBtn.addEventListener('click', () => {
+    console.log('[force511] click');
+    showFiveOneOneAlert();
+  });
 }
 
 // Try now (in case DOM is already ready), and also after DOM is ready
@@ -373,24 +399,3 @@ load();
 render(); 
 startTicker();
 })();
-// --- Global 5-1-1 Alert Functions ---
-function showFiveOneOneAlert() {
-  const overlay = document.getElementById('alertOverlay');
-  if (!overlay) return;
-  overlay.classList.remove('hidden');
-  document.body.classList.add('overflow-hidden');
-
-  // Vibration and confetti celebration
-  try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
-  try {
-    const defaults = { spread: 80, origin: { y: 0.7 } };
-    confetti(Object.assign({}, defaults, { particleCount: 180, startVelocity: 55 }));
-  } catch(e){}
-}
-
-function hideFiveOneOneAlert() {
-  const overlay = document.getElementById('alertOverlay');
-  if (!overlay) return;
-  overlay.classList.add('hidden');
-  document.body.classList.remove('overflow-hidden');
-}
