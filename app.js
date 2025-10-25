@@ -1,90 +1,81 @@
 (function(){
-const $ = (id) => document.getElementById(id);
+  const $ = (id) => document.getElementById(id);
 
-// IDs that match your current index.html template
-const elElapsed = $("elElapsed");       // was #currentElapsed
-const elMeta    = $("currentMeta");     // optional: we'll add this small div in HTML below
-const btnBig    = $("bigTap");
-const lblBig    = $("bigTapLabel");
-const btnEnd    = $("btnEnd");          // was #endCurrent
-const btnCsv    = $("btnCsv");          // was #exportCsv
-const btnReset  = $("btnReset");        // was #resetAll
-const list      = $("rows");            // was #history
+  // IDs that match current index.html
+  const elElapsed = $("elElapsed");       // live timer text
+  const elMeta    = $("currentMeta");     // small meta line (optional)
+  const btnBig    = $("bigTap");
+  const lblBig    = $("bigTapLabel");
+  const btnEnd    = $("btnEnd");
+  const btnCsv    = $("btnCsv");
+  const btnReset  = $("btnReset");
+  const list      = $("rows");
 
-let currentStart = null;
-let currentPhase = null; // "contraction" | "rest" | null
-let lastStart = null;    // keep if you want, not required now
-// rows: contraction entries only; when the next rest ends, we attach restMs + cycleMs to rows[0]
-let rows = []; // {id, start, end, durationMs, restMs?, cycleMs?}
-let tick = null;
+  let currentStart = null;
+  let currentPhase = null; // "contraction" | "rest" | null
+  let lastStart    = null;
+  // rows = contractions; when a rest ends we attach restMs & cycleMs to rows[0]
+  let rows = []; // { id, start, end, durationMs, restMs?, cycleMs? }
+  let tick = null;
 
   function load() {
     try {
       const raw = localStorage.getItem("retro-ctracker:v1");
       if (raw) {
         const data = JSON.parse(raw);
-        rows = Array.isArray(data.rows) ? data.rows : [];
+        rows         = Array.isArray(data.rows) ? data.rows : [];
         currentStart = typeof data.currentStart === "number" ? data.currentStart : null;
-        lastStart = typeof data.lastStart === "number" ? data.lastStart : null;
+        lastStart    = typeof data.lastStart === "number" ? data.lastStart : null;
       }
     } catch(e){}
   }
   function save() {
-    localStorage.setItem("retro-ctracker:v1", JSON.stringify({rows, currentStart, lastStart}));
+    localStorage.setItem("retro-ctracker:v1", JSON.stringify({ rows, currentStart, lastStart }));
   }
 
   function vibrate(p){ try{ navigator.vibrate && navigator.vibrate(p || [12,80,12]); }catch(e){} }
-  function fire(power){
-    try {
-      const count = Math.floor(200 * (power||0.7));
-      const defaults = { spread: 70, origin: { y: 0.6 } };
-      confetti(Object.assign({}, defaults, { particleCount: Math.floor(count*0.35), startVelocity: 45, scalar: .8 }));
-      confetti(Object.assign({}, defaults, { particleCount: Math.floor(count*0.25), angle: 60, spread: 55, origin: { x: 0 }, scalar: .9 }));
-      confetti(Object.assign({}, defaults, { particleCount: Math.floor(count*0.25), angle: 120, spread: 55, origin: { x: 1 }, scalar: .9 }));
-    } catch(e){}
-  }
 
   function fmt(ms){
     if (ms == null) return "—";
-    const s = Math.floor(ms/1000);
+    const s  = Math.floor(ms/1000);
     const mm = Math.floor(s/60);
     const ss = s % 60;
     return mm + ":" + String(ss).padStart(2,"0");
   }
-/* --- feedback flash (badge + ring) --- */
-function flashIndicator(ok) {
-  const btn   = document.getElementById('bigTap');
-  const wrap  = document.getElementById('bigTapFeedback');
-  const badge = document.getElementById('bigTapBadge');
-  if (!btn || !wrap || !badge) return;
 
-  // label with icon + text
-  badge.textContent = ok ? "✓  ≥1:00" : "!  <1:00";
+  /* --- feedback flash (badge + ring) --- */
+  function flashIndicator(ok) {
+    const btn   = document.getElementById('bigTap');
+    const wrap  = document.getElementById('bigTapFeedback');
+    const badge = document.getElementById('bigTapBadge');
+    if (!btn || !wrap || !badge) return;
 
-  // show badge
-  wrap.classList.remove('hidden');
-  wrap.classList.toggle('ok', ok);
-  wrap.classList.toggle('warn', !ok);
+    // label with icon + text
+    badge.textContent = ok ? "✓  ≥1:00" : "!  <1:00";
 
-  // high-contrast ring
-  btn.classList.remove('ring-ok', 'ring-warn');
-  void btn.offsetWidth; // restart animation
-  btn.classList.add(ok ? 'ring-ok' : 'ring-warn');
+    // show badge
+    wrap.classList.remove('hidden');
+    wrap.classList.toggle('ok', ok);
+    wrap.classList.toggle('warn', !ok);
 
-  // haptics (distinct)
-  try {
-    if (navigator.vibrate) {
-      ok ? navigator.vibrate([30,70,30]) : navigator.vibrate([12,50,12]);
-    }
-  } catch(e){}
-
-  // hide after ~1s
-  setTimeout(() => {
-    wrap.classList.add('hidden');
+    // high-contrast ring
     btn.classList.remove('ring-ok', 'ring-warn');
-  }, 1000);
-}
-  
+    void btn.offsetWidth; // restart animation
+    btn.classList.add(ok ? 'ring-ok' : 'ring-warn');
+
+    // haptics (distinct)
+    try {
+      if (navigator.vibrate) {
+        ok ? navigator.vibrate([30,70,30]) : navigator.vibrate([12,50,12]);
+      }
+    } catch(e){}
+
+    // hide after ~1s
+    setTimeout(() => {
+      wrap.classList.add('hidden');
+      btn.classList.remove('ring-ok', 'ring-warn');
+    }, 1000);
+  }  
 function isFiveOneOne(rows) {
   const now = Date.now();
   const HOUR = 60 * 60 * 1000;
