@@ -138,6 +138,7 @@
   src="./images/lukewarmpenguin-logo.png?v=2"
   alt="About the Developer"
   class="absolute right-0 header-icon-align w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform cursor-pointer"
+  role="button" tabindex="0"
 />
 
   <!-- Centered, wrapping title + tagline -->
@@ -217,9 +218,9 @@
   </div>
 </div>
 
-  <!-- ABOUT MODAL -->
+<!-- ABOUT MODAL -->
 <div id="aboutModal" class="fixed inset-0 hidden z-40">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div id="aboutBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
   <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass pt-7 pb-5 px-5 rounded-xl border border-white/20 shadow-lg help">
     <div class="flex items-center justify-between mb-3">
