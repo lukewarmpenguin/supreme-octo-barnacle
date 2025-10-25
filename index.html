@@ -99,22 +99,35 @@
   /* Modal text normalization */
   .help { font-size:.95rem;color:rgba(255,255,255,.92); }
   .help ul ul { font-size:.9em; }
+
+  /* Safe-area padding for iPhone notch / home indicator */
+.safe-pad {
+  padding-top:  calc(env(safe-area-inset-top) + 12px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 12px);
+}
+
+/* Allow absolutely-positioned items to sit below the notch */
+.safe-top { top: calc(env(safe-area-inset-top) + 8px); }
+
+/* If you ever need bottom-safe for fixed buttons */
+.safe-bottom { bottom: calc(env(safe-area-inset-bottom) + 8px); }
+   
 </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen safe-pad">
   <!-- Header -->
 <header class="relative mb-4 pt-7">
   <!-- Help Modal Trigger -->
 <button id="openHelp"
-  class="absolute top-2 left-2 text-sm text-white/80 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full w-7 h-7 flex items-center justify-center shadow-md backdrop-blur-sm transition">
-  ?
-</button>
+  class="absolute left-2 safe-top text-sm text-white/80 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full w-7 h-7 flex items-center justify-center shadow-md backdrop-blur-sm transition"
+  aria-label="Open help">?</button>
+  
   <!-- Logo in the top-right -->
-  <img
-    src="./images/lukewarmpenguin-logo.png?v=2"
-    alt="Lukewarmpenguin Logo"
-    class="absolute top-0 right-0 w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
-  />
+ <img
+  src="./images/lukewarmpenguin-logo.png?v=2"
+  alt="Lukewarmpenguin Logo"
+  class="absolute right-0 safe-top w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
+/>
 
   <!-- Centered, wrapping title + tagline -->
   <div class="text-center px-16">
@@ -205,7 +218,8 @@
   </script>
   <!-- TEMP: force alert button (for testing only) -->
 <button id="force511"
-  class="fixed left-4 bottom-4 z-50 text-xs font-mono px-2 py-1 rounded bg-white/15 border border-white/25 text-white hover:bg-white/25">
+  class="fixed left-4 safe-bottom z-50 text-xs font-mono px-2 py-1 rounded bg-white/15 border border-white/25 text-white hover:bg-white/25"
+  aria-label="Show 5-1-1 test alert">
   Force 5-1-1
 </button>
 </body>
