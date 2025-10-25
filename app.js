@@ -51,37 +51,37 @@ let tick = null;
     const ss = s % 60;
     return mm + ":" + String(ss).padStart(2,"0");
   }
-// Flash the big button for 1s with ring + readable badge (✓ ≥1:00 or ! <1:00)
+/* --- feedback flash (badge + ring) --- */
 function flashIndicator(ok) {
-  const btn    = document.getElementById('bigTap');
-  const wrap   = document.getElementById('bigTapFeedback');
-  const badge  = document.getElementById('bigTapBadge');
+  const btn   = document.getElementById('bigTap');
+  const wrap  = document.getElementById('bigTapFeedback');
+  const badge = document.getElementById('bigTapBadge');
   if (!btn || !wrap || !badge) return;
 
-  // Set label with icon + text (shape cue + readable)
+  // label with icon + text
   badge.textContent = ok ? "✓  ≥1:00" : "!  <1:00";
 
-  // Show badge
+  // show badge
   wrap.classList.remove('hidden');
-  wrap.classList.toggle('ok',   ok);
+  wrap.classList.toggle('ok', ok);
   wrap.classList.toggle('warn', !ok);
 
-  // Add high-contrast ring class (independent of base button color)
-  btn.classList.remove('ring-ok','ring-warn'); // reset if still present
-  void btn.offsetWidth;                         // restart animation
+  // high-contrast ring
+  btn.classList.remove('ring-ok', 'ring-warn');
+  void btn.offsetWidth; // restart animation
   btn.classList.add(ok ? 'ring-ok' : 'ring-warn');
 
-  // Haptics distinct patterns (kept for non-visual cue)
+  // haptics (distinct)
   try {
     if (navigator.vibrate) {
-      ok ? navigator.vibrate([30, 70, 30]) : navigator.vibrate([12, 50, 12]);
+      ok ? navigator.vibrate([30,70,30]) : navigator.vibrate([12,50,12]);
     }
-  } catch {}
+  } catch(e){}
 
-  // Hide after ~1 second
+  // hide after ~1s
   setTimeout(() => {
     wrap.classList.add('hidden');
-    btn.classList.remove('ring-ok','ring-warn');
+    btn.classList.remove('ring-ok', 'ring-warn');
   }, 1000);
 }
   
