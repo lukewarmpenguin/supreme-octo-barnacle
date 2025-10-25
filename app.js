@@ -333,24 +333,41 @@ function handleBigTap(){
     save(); render(); startTicker();
   }
 
- function toCsv(){
-  // Columns match the new data model
+function toCsv(){
+  // Columns match the data we actually keep
   const headers = [
     "Start (local)",
     "End (local)",
     "Contraction (mm:ss)",
-    "Rest (mm:ss)",
-    "Cycle (mm:ss)"
+    "Rest (mm:ss)",             // end of rest -> filled after next tap
+    "Cycle (mm:ss)",            // contraction + rest
+    "Start→Start (mm:ss)"       // purely informative (prev start to this start)
   ];
 
-  // rows are most-recent-first; CSV should be chronological
-  const lines = rows.slice().reverse().map(r => [
-    new Date(r.start).toLocaleString(),
-    new Date(r.end).toLocaleString(),
-    fmt(r.durationMs),
-    r.restMs  == null ? "" : fmt(r.restMs),
-    r.cycleMs == null ? "" : fmt(r.cycleMs)
-  ]);
+  // Make a chronological copy (oldest → newest)
+  const chrono = rows.slice().reverse();
+
+  const lines = chrono.map((r, i) => {
+    const startLocal = new Date(r.start).toLocaleString();
+    const endLocal   = new Date(r.end).toLocaleString();
+
+    // Start→Start uses the previous row's start (chronologically)
+    let startToStart = "";
+    if (i > 0) {
+      const prev = chrono[i - 1];
+      const delta = r.start - prev.start; // ms
+      startToStart = fmt(delta);
+    }
+
+    return [
+      startLocal,
+      endLocal,
+      fmt(r.durationMs),
+      r.restMs  == null ? "" : fmt(r.restMs),
+      r.cycleMs == null ? "" : fmt(r.cycleMs),
+      startToStart
+    ];
+  });
 
   // RFC4180-safe quoting for commas/quotes/newlines
   const csv = [headers, ...lines]
@@ -374,7 +391,6 @@ function handleBigTap(){
   a.remove();
   URL.revokeObjectURL(url);
 }
-
 // ===== Core listeners (elements that already exist above the scripts) =====
 btnBig   && btnBig.addEventListener("click", handleBigTap);
 btnEnd   && btnEnd.addEventListener("click", endCurrent);
