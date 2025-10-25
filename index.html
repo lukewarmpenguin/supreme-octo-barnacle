@@ -139,6 +139,32 @@
   100% { transform: translateY(0)    scale(1);   opacity: 1; }
 }
 .banner { animation: bannerPop .25s ease-out both; }
+
+   /* Center banner styling + neon glow (matches logo vibe) */
+.banner-card{
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: 4px solid rgba(232,121,249,1);         /* fuchsia frame */
+  background: rgba(34,211,238,0.12);             /* subtle cyan fill */
+  box-shadow:
+    0 0 30px rgba(232,121,249,0.35),             /* outer ambient */
+    inset 0 0 18px rgba(255,255,255,0.08);       /* soft inner */
+}
+
+/* Soft pulsing glow similar to the logo */
+@keyframes neonPulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 6px rgba(34,211,238,0.6))   /* cyan */
+      drop-shadow(0 0 14px rgba(217,70,239,0.5)); /* fuchsia */
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 12px rgba(34,211,238,0.95))
+      drop-shadow(0 0 22px rgba(217,70,239,0.75));
+  }
+}
+.neon-glow { animation: neonPulse 2.8s ease-in-out infinite; }
    
 </style>
 </head>
@@ -270,14 +296,15 @@
   <div class="absolute bottom-3 left-3 text-5xl select-none klaxon">🚨</div>
   <div class="absolute bottom-3 right-3 text-5xl select-none klaxon">🚨</div>
 
-  <!-- Center banner -->
-  <div class="absolute inset-x-0 top-10 flex justify-center">
-    <div class="px-5 py-4 rounded-xl border-4 border-fuchsia-400 bg-cyan-300/20 shadow-[0_0_30px_rgba(255,0,255,0.5)]
-                text-white text-center pixel banner">
-      <div class="text-sm opacity-90">5-1-1 Reached</div>
-      <div class="text-2xl mt-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">BABY INCOMING!</div>
+<!-- Center banner (perfectly centered) -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+  <div class="banner-card neon-glow pixel text-white text-center banner">
+    <div class="text-sm opacity-90">5–1–1 Reached</div>
+    <div class="text-2xl mt-1 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">
+      BABY INCOMING!
     </div>
   </div>
+</div>
 
   <!-- Dismiss -->
   <div class="absolute inset-x-0 bottom-10 flex justify-center">
