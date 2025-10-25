@@ -122,6 +122,13 @@
   50%      { filter: drop-shadow(0 0 12px rgba(34,211,238,0.9)); }
 }
 .logo-glow { animation: logo-pulse 3s infinite ease-in-out; }
+
+    /* Keep modal text consistent size; only the heading uses pixel font */
+.help { font-size: 0.95rem; color: rgba(255,255,255,0.92); }
+.help ul li { margin-left: 0; }
+.help ul ul { font-size: 0.9em; }      /* sub-bullets a touch smaller */
+.help strong { font-weight: 700; }     /* emphasis without pixel font */
+    
   </style>
 </head>
 <body class="min-h-screen">
@@ -193,25 +200,25 @@
 <div id="helpModal" class="fixed inset-0 hidden z-40">
   <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
-  <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass p-5 rounded-xl border border-white/20 shadow-lg">
+  <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass p-5 rounded-xl border border-white/20 shadow-lg help">
     <div class="flex items-center justify-between mb-3">
       <div class="pixel text-cyan-300 text-lg drop-shadow">How to use Nestling CC</div>
       <button id="closeHelp"
         class="px-2 py-1 rounded-md bg-white/10 border border-white/20 hover:bg-white/15 transition">Close</button>
     </div>
 
-    <ul class="space-y-3 text-sm leading-6 text-white/90">
-      <li>• Tap <span class="pixel text-cyan-200">One-Tap</span> to start timing a contraction.</li>
-      <li>• Tap again when the contraction ends — the app automatically starts the <span class="pixel text-fuchsia-300">Rest</span> period.</li>
+    <ul class="space-y-3 leading-6">
+      <li>• Tap <strong>One-Tap</strong> to start timing a contraction.</li>
+      <li>• Tap again when the contraction ends — the app automatically starts the <strong>Rest</strong> period.</li>
       <li>• Tap once more when the next contraction begins — that ends the rest and starts a new cycle.</li>
       <li>• The main button will briefly flash:
-        <ul class="ml-6 list-disc text-xs mt-1">
-          <li><span class="text-green-400">Green</span> if the contraction lasted ≥ 1 minute</li>
-          <li><span class="text-yellow-300">Yellow</span> if it lasted &lt; 1 minute</li>
+        <ul class="ml-6 list-disc mt-1">
+          <li><span class="text-green-400 font-semibold">Green</span> if the contraction lasted ≥ 1 minute</li>
+          <li><span class="text-yellow-300 font-semibold">Yellow</span> if it lasted &lt; 1 minute</li>
         </ul>
       </li>
-      <li>• When contractions follow the <span class="pixel text-cyan-200">5-1-1</span> pattern for an hour, you’ll see the <b>BABY INCOMING!</b> alert with confetti.</li>
-      <li>• Use <span class="pixel text-cyan-200">Export CSV</span> to save or share your timing history.</li>
+      <li>• When contractions follow the <strong>5-1-1</strong> pattern for an hour, you’ll see the <strong>BABY INCOMING!</strong> alert with confetti.</li>
+      <li>• Use <strong>Export CSV</strong> to save or share your timing history.</li>
     </ul>
   </div>
 </div>
