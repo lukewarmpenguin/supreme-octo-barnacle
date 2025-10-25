@@ -79,11 +79,6 @@ function isFiveOneOne(rows) {
   // 5-1-1: contractions average >= 1 min AND cycle average <= 5 min over the past hour
   return avgContraction >= MIN1 && avgCycle <= MIN5;
 }
-function showFiveOneOneAlert() {
-  const overlay = document.getElementById('alertOverlay');
-  if (!overlay) return;               // safe-guard if HTML not present
-  overlay.classList.remove('hidden'); // show overlay
-
   // --- 5-1-1 overlay (exposed globally) ---
 window.showFiveOneOneAlert = function () {
   const overlay = document.getElementById('alertOverlay');
@@ -105,20 +100,6 @@ window.hideFiveOneOneAlert = function () {
   overlay.classList.add('hidden');
   document.body.classList.remove('overflow-hidden');
 };
-
-  // Haptics + a little celebration
-  try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
-  try {
-    const defaults = { spread: 80, origin: { y: 0.7 } };
-    confetti(Object.assign({}, defaults, { particleCount: 150, startVelocity: 55 }));
-  } catch(e){}
-}
-
-function hideFiveOneOneAlert() {
-  const overlay = document.getElementById('alertOverlay');
-  if (!overlay) return;
-  overlay.classList.add('hidden');
-}
 
   function render() {
   // Button label + meta
@@ -407,6 +388,7 @@ function wireLateElements() {
     if (aboutBackdrop) aboutBackdrop.addEventListener('click', hide);
     document.addEventListener('keydown', (e)=>{ if (e.key==='Escape' && !aboutModal.classList.contains('hidden')) hide(e); });
   }
+}
 
 // Try now and on DOM ready
 wireLateElements();
