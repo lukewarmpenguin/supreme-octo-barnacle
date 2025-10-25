@@ -84,17 +84,6 @@ function flashIndicator(ok) {
     btn.classList.remove('ring-ok','ring-warn');
   }, 1000);
 }
-  // Haptics: OK = longer pattern, WARN = shorter
-  try {
-    if (navigator.vibrate) {
-      ok ? navigator.vibrate([30, 70, 30]) : navigator.vibrate([12, 50, 12]);
-    }
-  } catch {}
-
-  setTimeout(() => {
-    btn.classList.remove('flash-ok', 'flash-warn');
-  }, 1000);
-}
   
 function isFiveOneOne(rows) {
   const now = Date.now();
@@ -377,8 +366,9 @@ function wireLateElements() {
     dismissBtn.addEventListener('click', hideFiveOneOneAlert);
   }
 
-const forceBtn = document.getElementById('force511');
-if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
+  const forceBtn = document.getElementById('force511');
+  if (forceBtn) forceBtn.addEventListener('click', () => showFiveOneOneAlert());
+}
 
 // Try now (in case DOM is already ready), and also after DOM is ready
 wireLateElements();
