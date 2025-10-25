@@ -67,6 +67,33 @@
     /* Simple list styling */
     .hist-card{border-radius:.75rem;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);padding:.75rem .9rem;}
     .hist-meta{font-size:.75rem;opacity:.8}
+
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow:
+      0 0 2px #fff,
+      0 0 8px #0ff,
+      0 0 16px #0ff,
+      0 0 32px #0ff,
+      0 0 64px #0ff;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+.neon-glow {
+  animation: neon-flicker 2.5s infinite alternate;
+}
+    @keyframes logo-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(0,255,255,0.5)); }
+  50% { filter: drop-shadow(0 0 14px rgba(0,255,255,0.9)); }
+}
+
+.logo-glow {
+  animation: logo-pulse 3s infinite ease-in-out;
+}
   </style>
 </head>
 <body class="min-h-screen">
@@ -78,10 +105,19 @@
       <span class="pixel" style="font-size:.9rem">?</span>
     </button>
   </header>
-  <header class="text-center mb-4">
+<header class="relative mb-6 text-center">
   <h1 class="pixel text-3xl text-cyan-400 drop-shadow">
     Nestling Contraction Counter
   </h1>
+  <p class="text-xs uppercase tracking-widest text-fuchsia-300 opacity-80 mt-1">
+    A Lukewarmpenguin Project
+  </p>
+ <img
+  src="images/lukewarmpenguin-logo.png"
+  alt="Lukewarmpenguin Logo"
+  class="w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
+/>
+  />
 </header>
 
   <!-- Main card -->
