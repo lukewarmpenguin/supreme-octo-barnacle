@@ -21,161 +21,85 @@
   <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- Base styles (single style block) -->
-  <style>
-    :root{
-      --bg:#0a0b1e; --fg:#e6f7ff;
-      --glass:rgba(255,255,255,.06); --glass-border:rgba(255,255,255,.14);
-      --btn-a:#3b82f6; --btn-b:#a855f7;
-    }
-    html,body{background:var(--bg);color:var(--fg);min-height:100%;}
-    .pixel{font-family:'Press Start 2P',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
-    .title-pixel{font-size:1rem;}
-    @media (min-width:480px){.title-pixel{font-size:1.25rem}}
-    @media (min-width:768px){.title-pixel{font-size:1.5rem}}
+ <style>
+  :root{
+    --bg:#0a0b1e; --fg:#e6f7ff;
+    --glass:rgba(255,255,255,.06); --glass-border:rgba(255,255,255,.14);
+    --btn-a:#3b82f6; --btn-b:#a855f7;
+  }
 
-    .glass{background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(8px);border-radius:1rem;}
+  html,body{background:var(--bg);color:var(--fg);min-height:100%;}
+  .pixel{font-family:'Press Start 2P',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .glass{background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(8px);border-radius:1rem;}
+  .hist-card{border-radius:.75rem;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);padding:.75rem .9rem;}
+  .hist-meta{font-size:.75rem;opacity:.8}
 
-    /* Big button & glow */
-    #bigTap{position:relative;isolation:isolate;width:15rem;height:15rem;border-radius:9999px;}
-    @media (max-width:380px){#bigTap{width:14rem;height:14rem}}
-    #bigTap::before{
-      content:"";position:absolute;inset:0;border-radius:inherit;z-index:1;
-      background:
-        radial-gradient(80% 80% at 30% 25%, rgba(255,255,255,.18), transparent 60%),
-        linear-gradient(135deg, var(--btn-a), var(--btn-b));
-    }
-    #bigTap::after{
-      content:"";position:absolute;inset:-3px;border-radius:inherit;z-index:0;
-      box-shadow:0 0 24px rgba(34,211,238,.35),0 0 46px rgba(217,70,239,.35),inset 0 0 22px rgba(255,255,255,.12);
-    }
-    #bigTap.flash-ok::after,#bigTap.flash-warn::after{
-      content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:1;z-index:60;
-    }
-    #bigTap.flash-ok::after{
-      background:radial-gradient(ellipse at center, rgba(34,197,94,.35), rgba(34,197,94,.20) 60%, rgba(34,197,94,.10) 80%, transparent 100%);
-      box-shadow:0 0 30px rgba(34,197,94,.55), inset 0 0 18px rgba(34,197,94,.45);
-    }
-    #bigTap.flash-warn::after{
-      background:radial-gradient(ellipse at center, rgba(234,179,8,.40), rgba(234,179,8,.22) 60%, rgba(234,179,8,.12) 80%, transparent 100%);
-      box-shadow:0 0 30px rgba(234,179,8,.55), inset 0 0 18px rgba(234,179,8,.45);
-    }
+  /* Header */
+  .title-wrap{
+    font-size: clamp(1.1rem, 4.5vw, 1.75rem);
+    line-height: 1.15;
+    margin: 0;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  .neon-text{
+    color:#22d3ee;
+    text-shadow:
+      0 0 1px rgba(255,255,255,.9),
+      0 0 4px rgba(34,211,238,.9),
+      0 0 8px rgba(34,211,238,.5);
+  }
+  .tagline{
+    font-size: clamp(.7rem, 2vw, .8rem);
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color: rgba(244,114,182,.9);
+    margin-top:.35rem;
+  }
+  @keyframes logo-pulse {
+    0%,100% { filter: drop-shadow(0 0 6px rgba(34,211,238,.5)); }
+    50%     { filter: drop-shadow(0 0 12px rgba(34,211,238,.9)); }
+  }
+  .logo-glow { animation: logo-pulse 3s infinite ease-in-out; }
 
-    /* Help modal entrance */
-    #helpModal:not(.hidden) .glass{animation:modalPop .22s ease-out both;}
-    @keyframes modalPop{0%{transform:translateY(-6px) scale(.98);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+  /* Big One-Tap button (base) */
+  #bigTap{position:relative;isolation:isolate;width:15rem;height:15rem;border-radius:9999px;}
+  @media (max-width:380px){#bigTap{width:14rem;height:14rem}}
+  #bigTap::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;z-index:1;
+    background:
+      radial-gradient(80% 80% at 30% 25%, rgba(255,255,255,.18), transparent 60%),
+      linear-gradient(135deg, var(--btn-a), var(--btn-b));
+  }
+  #bigTap::after{
+    content:"";position:absolute;inset:-3px;border-radius:inherit;z-index:0;
+    box-shadow:0 0 24px rgba(34,211,238,.35),
+               0 0 46px rgba(217,70,239,.35),
+               inset 0 0 22px rgba(255,255,255,.12);
+  }
 
-    /* Simple list styling */
-    .hist-card{border-radius:.75rem;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);padding:.75rem .9rem;}
-    .hist-meta{font-size:.75rem;opacity:.8}
+  /* High-contrast ring flash (color-blind friendly) */
+  @keyframes ringPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.85), 0 0 22px rgba(255,255,255,.35); }
+    100% { box-shadow: 0 0 0 10px rgba(255,255,255,0), 0 0 8px rgba(255,255,255,.15); }
+  }
+  .ring-ok, .ring-warn { position: relative; }
+  .ring-ok::after, .ring-warn::after{
+    content:"";position:absolute;inset:-6px;border-radius:9999px;pointer-events:none;
+    animation: ringPulse 900ms ease-out forwards;
+    outline:3px solid rgba(255,255,255,.9); outline-offset:3px;
+  }
+  .ring-ok::after   { box-shadow:0 0 0 0 rgba(34,197,94,.9); }   /* green tint */
+  .ring-warn::after { box-shadow:0 0 0 0 rgba(245,158,11,.95); } /* amber tint */
 
-    /* tighter line height for pixel font */
-.tight { line-height: 1.1; }
+  /* Help modal entrance */
+  #helpModal:not(.hidden) .glass{animation:modalPop .22s ease-out both;}
+  @keyframes modalPop{0%{transform:translateY(-6px) scale(.98);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
 
-/* responsive title + subtitle sizing (clamped) */
-.title-pixel {
-  /* ~16–24px depending on screen width */
-  font-size: clamp(1rem, 3.2vw, 1.5rem);
-  max-width: 20ch; /* avoid 2-line wraps */
-}
-.subtitle {
-  /* ~10–12px */
-  font-size: clamp(0.625rem, 1.8vw, 0.75rem);
-  letter-spacing: 0.18em;
-}
-
-/* logo size */
-.logo-size { width: 3rem; height: 3rem; }          /* 48px */
-@media (min-width: 480px){ .logo-size { width: 3.25rem; height: 3.25rem; } }
-@media (min-width: 768px){ .logo-size { width: 3.5rem; height: 3.5rem; } }
-
-/* Title wraps and scales smoothly */
-.title-wrap{
-  font-size: clamp(1.1rem, 4.5vw, 1.75rem);
-  line-height: 1.15;
-  margin: 0;
-  word-break: normal;
-  white-space: normal;         /* allow wrapping */
-  text-wrap: balance;          /* nicer line breaks on supported browsers */
-}
-
-/* Subtle neon text-only glow (no big aura) */
-.neon-text{
-  color: #22d3ee; /* cyan */
-  text-shadow:
-    0 0 1px rgba(255,255,255,0.9),
-    0 0 4px rgba(34,211,238,0.9),
-    0 0 8px rgba(34,211,238,0.5);
-}
-
-/* Tagline: small, spaced, readable */
-.tagline{
-  font-size: clamp(0.7rem, 2vw, 0.8rem);
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: rgba(244,114,182,0.9); /* fuchsia-300-ish */
-  margin-top: .35rem;
-}
-
-/* Optional soft logo glow */
-@keyframes logo-pulse {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(34,211,238,0.5)); }
-  50%      { filter: drop-shadow(0 0 12px rgba(34,211,238,0.9)); }
-}
-.logo-glow { animation: logo-pulse 3s infinite ease-in-out; }
-
-    /* Keep modal text consistent size; only the heading uses pixel font */
-.help { font-size: 0.95rem; color: rgba(255,255,255,0.92); }
-.help ul li { margin-left: 0; }
-.help ul ul { font-size: 0.9em; }      /* sub-bullets a touch smaller */
-.help strong { font-weight: 700; }     /* emphasis without pixel font */
-
-    /* High-contrast ring that sits above the button's color */
-@keyframes ringPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.85), 0 0 22px rgba(255,255,255,.35); }
-  100% { box-shadow: 0 0 0 10px rgba(255,255,255,0), 0 0 8px rgba(255,255,255,.15); }
-}
-.ring-ok, .ring-warn {
-  position: relative;
-}
-.ring-ok::after, .ring-warn::after {
-  content:"";
-  position:absolute; inset:-6px; border-radius:9999px; pointer-events:none;
-  animation: ringPulse 900ms ease-out forwards;
-  /* ring color differs for ok/warn; white outer ring stays */
-  outline: 3px solid rgba(255,255,255,.9);
-}
-.ring-ok::after   { outline-offset: 3px; box-shadow: 0 0 0 0 rgba(34,197,94,.9); }
-.ring-warn::after { outline-offset: 3px; box-shadow: 0 0 0 0 rgba(245,158,11,.95); }
-
-/* Badge theme tweaks */
-#bigTapFeedback { display:flex; }      /* hidden via .hidden class from Tailwind */
-#bigTapFeedback.ok   #bigTapBadge { background: rgba(7, 31, 14, .8);  border-color: rgba(34,197,94,.6); }
-#bigTapFeedback.warn #bigTapBadge { background: rgba(41, 28, 4,  .8);  border-color: rgba(245,158,11,.65); }
-
-/* Make sure the overlay sits above the button's gradient/glow */
-#bigTapFeedback, #bigTapBadge { z-index: 70; }
-
-    @keyframes ringPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.85), 0 0 22px rgba(255,255,255,.35); }
-  100% { box-shadow: 0 0 0 10px rgba(255,255,255,0), 0 0 8px rgba(255,255,255,.15); }
-}
-.ring-ok, .ring-warn { position: relative; }
-.ring-ok::after, .ring-warn::after {
-  content:"";
-  position:absolute; inset:-6px; border-radius:9999px; pointer-events:none;
-  animation: ringPulse 900ms ease-out forwards;
-  outline: 3px solid rgba(255,255,255,.9);
-  outline-offset: 3px;
-}
-.ring-ok::after   { box-shadow: 0 0 0 0 rgba(34,197,94,.9); }   /* green tint */
-.ring-warn::after { box-shadow: 0 0 0 0 rgba(245,158,11,.95); } /* amber tint */
-
-#bigTapFeedback{ display:flex; }           /* becomes hidden via .hidden */
-#bigTapFeedback.ok   #bigTapBadge{ background: rgba(7,31,14,.8);  border-color: rgba(34,197,94,.6); }
-#bigTapFeedback.warn #bigTapBadge{ background: rgba(41,28,4,.8);  border-color: rgba(245,158,11,.65); }
-#bigTapFeedback, #bigTapBadge { z-index: 70; }
-    
-  </style>
+  /* Modal text normalization */
+  .help { font-size:.95rem;color:rgba(255,255,255,.92); }
+  .help ul ul { font-size:.9em; }
+</style>
 </head>
 <body class="min-h-screen">
   <!-- Header -->
@@ -221,14 +145,6 @@
             <span id="bigTapLabel" class="pixel text-[0.9rem] mt-1">Start Contraction</span>
             <span class="hist-meta mt-1">Ends current & starts new</span>
           </div>
-            <!-- ADD (or restore) THIS BLOCK -->
-  <div id="bigTapFeedback"
-       class="pointer-events-none absolute inset-0 hidden items-center justify-center">
-    <span id="bigTapBadge"
-          class="px-3 py-1 rounded-md text-[12px] font-semibold tracking-wide
-                 bg-black/70 border border-white/30 text-white
-                 shadow-[0_0_10px_rgba(0,0,0,.6)]"></span>
-  </div>
         </button>
       </div>
 
@@ -252,7 +168,7 @@
 
 <!-- HELP MODAL -->
 <div id="helpModal" class="fixed inset-0 hidden z-40">
-  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+  <div id="helpBackdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
   <div class="absolute inset-x-4 top-16 md:inset-x-0 md:top-24 md:mx-auto md:max-w-md glass pt-7 pb-5 px-5 rounded-xl border border-white/20 shadow-lg help">
     <div class="flex items-center justify-between mb-3">
