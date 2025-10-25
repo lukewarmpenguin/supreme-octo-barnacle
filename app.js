@@ -198,7 +198,7 @@ function handleBigTap(){
     currentPhase = "contraction";
     currentStart = t;
     lastStart = t; // not used for logic anymore, but fine to keep
-    fire(1); vibrate([10,40,10]);
+    vibrate([10,40,10]);
     save(); render(); startTicker();
     return;
   }
@@ -224,7 +224,7 @@ function handleBigTap(){
     currentPhase = "rest";
     currentStart = t;
 
-    fire(0.6); vibrate([12,40,12]);
+    vibrate([12,40,12]);
     save(); render(); startTicker();
     return;
   }
@@ -243,7 +243,7 @@ function handleBigTap(){
     currentPhase = "contraction";
     currentStart = t;
 
-    fire(1); vibrate([15,60,15]);
+    vibrate([15,60,15]);
     save(); render(); startTicker();
 
     // 5-1-1 safety check runs when we complete a cycle (i.e., after rest)
@@ -283,7 +283,7 @@ function handleBigTap(){
   currentStart = null;
   currentPhase = null;
 
-  fire(.8); vibrate([8,40,8]);
+  vibrate([8,40,8]);
   save(); render(); startTicker();
 }
 // ---- Help modal wiring (simple & reliable) ----
@@ -320,7 +320,7 @@ function handleBigTap(){
   
   function resetAll(){
     rows = []; currentStart = null; lastStart = null;
-    fire(.5); vibrate(25);
+    vibrate(25);
     save(); render(); startTicker();
   }
 
