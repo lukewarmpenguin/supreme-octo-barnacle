@@ -373,3 +373,24 @@ load();
 render(); 
 startTicker();
 })();
+// --- Global 5-1-1 Alert Functions ---
+function showFiveOneOneAlert() {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('hidden');
+  document.body.classList.add('overflow-hidden');
+
+  // Vibration and confetti celebration
+  try { navigator.vibrate && navigator.vibrate([60,160,60,160,60]); } catch(e){}
+  try {
+    const defaults = { spread: 80, origin: { y: 0.7 } };
+    confetti(Object.assign({}, defaults, { particleCount: 180, startVelocity: 55 }));
+  } catch(e){}
+}
+
+function hideFiveOneOneAlert() {
+  const overlay = document.getElementById('alertOverlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  document.body.classList.remove('overflow-hidden');
+}
