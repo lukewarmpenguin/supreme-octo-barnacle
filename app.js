@@ -370,32 +370,51 @@ function handleBigTap(){
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
-// Existing core listeners (these target elements that already exist above the scripts)
-btnBig.addEventListener("click", handleBigTap);
-btnEnd.addEventListener("click", endCurrent);
-btnCsv.addEventListener("click", toCsv);
-btnReset.addEventListener("click", resetAll);
+// ===== Core listeners (elements that already exist above the scripts) =====
+btnBig   && btnBig.addEventListener("click", handleBigTap);
+btnEnd   && btnEnd.addEventListener("click", endCurrent);
+btnCsv   && btnCsv.addEventListener("click", toCsv);
+btnReset && btnReset.addEventListener("click", resetAll);
 
-// 🔧 Wire elements that are defined *below* the scripts (overlay + force button)
+// ===== Wire elements that are defined below the scripts (overlay + force + about) =====
 function wireLateElements() {
-  const dismissBtn = document.getElementById('alertDismiss');
-  if (dismissBtn) {
-    dismissBtn.addEventListener('click', hideFiveOneOneAlert);
+  // 5-1-1 overlay controls
+  const dismissBtn    = document.getElementById('alertDismiss');
+  const alertBackdrop = document.getElementById('alertBackdrop');
+  if (dismissBtn)    dismissBtn.addEventListener('click', window.hideFiveOneOneAlert);
+  if (alertBackdrop) alertBackdrop.addEventListener('click', window.hideFiveOneOneAlert);
+
+  // Force button (testing)
+  const forceBtn = document.getElementById('force511');
+  if (forceBtn) {
+    forceBtn.addEventListener('click', () => {
+      console.log('[force511] click');
+      window.showFiveOneOneAlert();
+    });
   }
 
-const forceBtn = document.getElementById('force511');
-if (forceBtn) {
-  forceBtn.addEventListener('click', () => {
-    console.log('[force511] click');
-    showFiveOneOneAlert();
-  });
+  // About modal (logo)
+  const openAbout     = document.getElementById('openAbout');
+  const aboutModal    = document.getElementById('aboutModal');
+  const closeAbout    = document.getElementById('closeAbout');
+  const aboutBackdrop = document.getElementById('aboutBackdrop');
+  if (openAbout && aboutModal) {
+    const show = (e)=>{ e && e.preventDefault(); aboutModal.classList.remove('hidden'); };
+    const hide = (e)=>{ e && e.preventDefault(); aboutModal.classList.add('hidden'); };
+    openAbout.addEventListener('click', show);
+    openAbout.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') show(e); });
+    if (closeAbout)    closeAbout.addEventListener('click', hide);
+    if (aboutBackdrop) aboutBackdrop.addEventListener('click', hide);
+    document.addEventListener('keydown', (e)=>{ if (e.key==='Escape' && !aboutModal.classList.contains('hidden')) hide(e); });
+  }
 }
 
-// Try now (in case DOM is already ready), and also after DOM is ready
+// Try now and on DOM ready
 wireLateElements();
 document.addEventListener('DOMContentLoaded', wireLateElements);
 
-load(); 
-render(); 
+// Initial state
+load();
+render();
 startTicker();
 })();
