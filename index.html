@@ -111,6 +111,12 @@
 
 /* If you ever need bottom-safe for fixed buttons */
 .safe-bottom { bottom: calc(env(safe-area-inset-bottom) + 8px); }
+
+/* Align logo with help icon vertically */
+.header-icon-align {
+  top: calc(env(safe-area-inset-top) + 4px);  /* same as help icon base */
+  transform: translateY(2px); /* fine-tune vertical centering */
+}
    
 </style>
 </head>
@@ -126,7 +132,7 @@
  <img
   src="./images/lukewarmpenguin-logo.png?v=2"
   alt="Lukewarmpenguin Logo"
-  class="absolute right-0 safe-top w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
+  class="absolute right-0 header-icon-align w-14 h-14 rounded-full logo-glow hover:scale-105 transition-transform"
 />
 
   <!-- Centered, wrapping title + tagline -->
