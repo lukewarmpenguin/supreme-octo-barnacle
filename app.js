@@ -43,39 +43,26 @@
     return mm + ":" + String(ss).padStart(2,"0");
   }
 
-  /* --- feedback flash (badge + ring) --- */
-  function flashIndicator(ok) {
-    const btn   = document.getElementById('bigTap');
-    const wrap  = document.getElementById('bigTapFeedback');
-    const badge = document.getElementById('bigTapBadge');
-    if (!btn || !wrap || !badge) return;
+function flashIndicator(ok) {
+  const btn = document.getElementById('bigTap');
+  if (!btn) return;
 
-    // label with icon + text
-    badge.textContent = ok ? "✓  ≥1:00" : "!  <1:00";
+  // add ring (green for ≥1:00, amber for <1:00)
+  btn.classList.remove('ring-ok','ring-warn'); // reset
+  void btn.offsetWidth;                         // restart animation
+  btn.classList.add(ok ? 'ring-ok' : 'ring-warn');
 
-    // show badge
-    wrap.classList.remove('hidden');
-    wrap.classList.toggle('ok', ok);
-    wrap.classList.toggle('warn', !ok);
+  // haptics
+  try {
+    if (navigator.vibrate) {
+      ok ? navigator.vibrate([30,70,30]) : navigator.vibrate([12,50,12]);
+    }
+  } catch(e){}
 
-    // high-contrast ring
-    btn.classList.remove('ring-ok', 'ring-warn');
-    void btn.offsetWidth; // restart animation
-    btn.classList.add(ok ? 'ring-ok' : 'ring-warn');
-
-    // haptics (distinct)
-    try {
-      if (navigator.vibrate) {
-        ok ? navigator.vibrate([30,70,30]) : navigator.vibrate([12,50,12]);
-      }
-    } catch(e){}
-
-    // hide after ~1s
-    setTimeout(() => {
-      wrap.classList.add('hidden');
-      btn.classList.remove('ring-ok', 'ring-warn');
-    }, 1000);
-  }  
+  // clear after 1s
+  setTimeout(() => btn.classList.remove('ring-ok','ring-warn'), 1000);
+}
+  
 function isFiveOneOne(rows) {
   const now = Date.now();
   const HOUR = 60 * 60 * 1000;
