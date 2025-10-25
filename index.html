@@ -121,6 +121,11 @@
   filter: drop-shadow(0 0 8px rgba(244,114,182,0.9)) brightness(1.1);
   transform: scale(1.08);
 }
+   /* Horizontal center line for header icons (respects iPhone notch) */
+.icon-center {
+  top: calc(env(safe-area-inset-top) + 36px); /* adjust 36px to taste */
+  transform: translateY(-50%);                /* align by element center */
+}
    
 </style>
 </head>
@@ -129,7 +134,7 @@
 <header class="relative mb-4 pt-7">
   <!-- Help Modal Trigger -->
 <button id="openHelp"
-  class="absolute left-2 safe-top text-sm text-white/80 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full w-7 h-7 flex items-center justify-center shadow-md backdrop-blur-sm transition"
+  class="absolute left-4 icon-center text-sm text-white/80 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full w-7 h-7 flex items-center justify-center shadow-md backdrop-blur-sm transition"
   aria-label="Open help">?</button>
   
   <!-- Logo in the top-right -->
